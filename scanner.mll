@@ -4,7 +4,7 @@ let letter = ['a'-'z' 'A'-'Z']
 
 rule token = parse
   [' ' ] { token lexbuf } (* Whitespace *)
-  | '**'   { comment lexbuf }           (* Comments *)
+  | '[*'   { comment lexbuf }           (* Comments *)
   | '('      { LPAREN }
   | ')'      { RPAREN }
   | '{'      { LBRACE }
