@@ -4,7 +4,7 @@ let letter = ['a'-'z' 'A'-'Z']
 
 rule token = parse
   [' ' ] { token lexbuf } (* Whitespace *)
-  | "[*"     { comment lexbuf }           (* Comments *)
+  | '**'   { comment lexbuf }           (* Comments *)
   | '('      { LPAREN }
   | ')'      { RPAREN }
   | '{'      { LBRACE }
@@ -13,20 +13,26 @@ rule token = parse
   | ','      { COMMA }
   | '+'      { PLUS }
   | '-'      { MINUS }
+  | '*'      { TIME }
+  | '\'      { DEVIDE }
+  | '%'      { MOD }
   | '='      { ASSIGN }
-  | "=="     { EQ }
-  | "!="     { NEQ }
-  | '<'      { LT }
-  | "&&"     { AND }
-  | "||"     { OR }
-  | "if"     { IF }
-  | "else"   { ELSE }
-  | "while"  { WHILE }
-  | "return" { RETURN }
-  | "int"    { INT }
-  | "bool"   { BOOL }
-  | "True"   { BLIT(true)  }
-  | "False"  { BLIT(false) }
+  | '=='     { EQ }
+  | '!='     { NEQ }
+  | '<'      { LSTHAN }
+  | '<='     { LSEQTHAN }
+  | '>'      { GRTHAN }
+  | '>='     { GREQTHAN }
+  | '&&'     { AND }
+  | '||'     { OR }
+  | 'if'    { IF }
+  | 'else'  { ELSE }
+  | 'while' { WHILE }
+  | 'return'{ RETURN }
+  | 'int'   { INT }
+  | 'bool'  { BOOL }
+  | 'True'  { BLIT(true)  }
+  | 'False'  { BLIT(false) }
   | '\n'     { NEWLINE  }
   | '\t'     { TAB       }
   | 
