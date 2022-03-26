@@ -18,8 +18,8 @@ rule token = parse
   | '-'      { MINUS }
   | '*'      { TIMES }
   | '/'      { DIVIDE }
-  | "./"     { DIVIDEEL }
-  | ".*"     { TIMESEL }
+  | "/."     { DIVIDEEL }
+  | "*."     { TIMESEL }
   | '%'      { MOD }
   | '='      { ASSIGN }
   | "=="     { EQ }
@@ -49,6 +49,7 @@ rule token = parse
   | digit+ as lem  { LITERAL(int_of_string lem) }
   | letter (digit | letter | '_')* as lem { ID(lem) }
   | '"' letter* '"' as lem { STRING(lem) }
+  | digit+ '.' digit+ as lem { FLOAT(lem) }
   | eof { EOF }
   | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
 
