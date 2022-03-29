@@ -1,0 +1,23 @@
+function int addOne(int x){
+
+return x+1;
+}
+
+function void main(){
+int x;
+int y;
+int z;
+string s;
+
+x=15;
+x=1;
+y=2;
+y=addOne(y);
+z= x * y;
+s="H";
+
+
+s= "hello World";
+}
+
+
