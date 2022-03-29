@@ -38,6 +38,9 @@ rule token = parse
 | "-"      { MINUS }
 | "*"      { TIMES }
 | "/"      { DIVIDE }
+| "%"      { MOD }
+| "+."     {  PLUSELEM }
+| "-."      { MINUSELEM }
 | "*."     { TIMESELEM }
 | "/."     { DIVIDEELEM }
 | "TP"      { TRANSPOSE }

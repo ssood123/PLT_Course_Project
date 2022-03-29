@@ -10,7 +10,7 @@ open Ast
 %token SEMI COMMA PERIOD
 %token NOT AND OR EQ NEQ LT LEQ GT GEQ
 %token INT FLOAT STRING BOOL MATRIX VOID
-%token TRANSPOSE FUNC LENROW LENCOL ROWNUM RETURN IF FOR WHILE ELSE
+%token TRANSPOSE FUNC LENROW LENCOL ROWNUM RETURN IF FOR WHILE ELSE MOD
 %token <int> LITERAL
 %token <bool> BOOLLIT
 %token <string> ID
@@ -118,6 +118,8 @@ expr:
   | expr MINUS  expr { Binop($1, Sub,   $3)   }
   | expr TIMES  expr { Binop($1, Mult,  $3)   }
   | expr DIVIDE expr { Binop($1, Div,   $3)   }
+  | expr PLUSELEM expr  { Binop($1, Eladd,   $3) }
+  | expr MINUSELEM expr { Binop($1, Elsub,   $3)  }
   | expr TIMESELEM expr  { Binop($1, Elmult,   $3) }
   | expr DIVIDEELEM expr { Binop($1, Eldiv,   $3)  }
   | expr EQ     expr { Binop($1, Equal, $3)   }
@@ -128,6 +130,7 @@ expr:
   | expr GEQ    expr { Binop($1, Geq,   $3)   }
   | expr AND    expr { Binop($1, And,   $3)   }
   | expr OR     expr { Binop($1, Or,    $3)   }
+  | expr MOD    expr {Binop($1, Mod, $3)}
                       
 args_opt:
     /* nothing */ { [] }
