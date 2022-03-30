@@ -19,14 +19,13 @@ runtest:
 	@echo "finished test"
 
 .PHONY: testsemantics
-testsemantics:
-	begintestingsemanticswords buildsemtest runsemtest
+testsemantics: buildsemtest runsemtest
 
-begintestingsemanticswords:
-	@echo "testing the semantics piece"
 buildsemtest:
+	@echo "testing the semantics piece"
 	ocamlbuild testsemantics.native
 	@echo "finished building the semantics test"
+
 runsemtest:
 	./testsemantics.native
 

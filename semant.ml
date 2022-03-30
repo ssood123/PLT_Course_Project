@@ -5,14 +5,38 @@ open Sast
 
 module StringMap = Map.Make(String)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (* Semantic checking of the AST. Returns an SAST if successful,
    throws an exception if something is wrong.
    Check each global variable, then check each function *)
 
 let check (globals, functions) =
 
+  (* Verify a list of bindings has no duplicate names *)
+  let check_binds (kind : string) (binds : (typ * string) list) =
+    let rec dups = function
+        [] -> ()
+      |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
+        raise (Failure ("duplicate " ^ kind ^ " " ^ n1))
+      | _ :: t -> dups t
+    in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds);
   (* Make sure no globals duplicate *)
-  check_binds "global" globals;
+  check_binds "global" globals
+
+  in 
 
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
@@ -169,12 +193,3 @@ let check (globals, functions) =
 (* 
 helper functions: 
 *)
-
-  (* Verify a list of bindings has no duplicate names *)
-  let check_binds (kind : string) (binds : (typ * string) list) =
-    let rec dups = function
-        [] -> ()
-      |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
-        raise (Failure ("duplicate " ^ kind ^ " " ^ n1))
-      | _ :: t -> dups t
-    in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds);
