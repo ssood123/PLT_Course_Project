@@ -32,16 +32,16 @@ let check (globals, functions) =
       |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
         raise (Failure ("duplicate " ^ kind ^ " " ^ n1))
       | _ :: t -> dups t
-    in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds);
-  (* Make sure no globals duplicate *)
-  check_binds "global" globals
-
+    in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds)
   in 
+  (* Make sure no globals duplicate *)
+  check_binds "global" globals;
+
 
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
     StringMap.add "print" {
-      rtyp = Int;
+      typ = Int;	
       fname = "print";
       formals = [(Int, "x")];
       locals = []; body = [] } StringMap.empty
