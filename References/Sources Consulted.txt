@@ -1,0 +1,13 @@
+Class code. 
+Micro/NanoC.
+Rippl (old project) https://github.com/al3623/rippl/blob/master/reports/Rippl_LRM.pdf
+Tiger (Edwards language) http://www.cs.columbia.edu/~sedwards/classes/2002/w4115/tiger.pdf
+Red Pandas (old project, last example on page) http://www1.cs.columbia.edu/~sedwards/classes/2021/4115-spring/index.html
+
+
+
+
+
+
+
+
