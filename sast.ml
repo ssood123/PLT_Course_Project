@@ -53,10 +53,10 @@ let rec string_of_sexpr (t, e) =
       | SBoolLit(false) -> "false"
       | SId(s) -> s
       | SStrLit(l) -> "\"" ^ (String.escaped l) ^ "\""
-      | SMat(_) -> "matLit"
-      | SRow(s) -> s ^ ".row"
-      | SCol(s) -> s ^ ".col"
-      | STran(s) -> s ^ ".T"
+      | SMatElem(_) -> "matLit"
+      | SLenRow(s) -> string_of_int s ^ ".row"
+      | SLenCol(s) -> string_of_int s ^ ".col"
+      | STranspose(s,t) -> s ^ ".T"
       | SBinop(e1, o, e2) ->
         string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
       | SAccess(s, r, c) -> s ^ "[" ^ string_of_sexpr r ^ "]" ^ "[" ^ string_of_sexpr c ^ "]"
@@ -72,7 +72,7 @@ let rec string_of_sstmt = function
   | SReturn(expr) -> "return " ^ string_of_sexpr expr ^ ";\n"
   | SIf(e, s1, s2) ->  "if (" ^ string_of_sexpr e ^ ")\n" ^
                        string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2
-  | For(e1, e2, e3, s) ->
+  | SFor(e1, e2, e3, s) ->
       "for (" ^ string_of_sexpr e1  ^ " ; " ^ string_of_sexpr e2 ^ " ; " ^
       string_of_sexpr e3  ^ ") " ^ string_of_sstmt s
   | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
@@ -95,7 +95,7 @@ let string_of_styp = function
 
 
 let string_of_sfdecl fdecl =
-  string_of_typ fdecl.srtyp ^ " " ^
+  string_of_typ fdecl.styp ^ " " ^
   fdecl.sfname ^ "(" ^ String.concat ", " (List.map snd fdecl.sformals) ^
   ")\n{\n" ^
   String.concat "" (List.map string_of_vdecl fdecl.slocals) ^
