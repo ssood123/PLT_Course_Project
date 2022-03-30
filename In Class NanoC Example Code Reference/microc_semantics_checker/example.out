@@ -1,0 +1,30 @@
+Sementically checked program:
+
+int a;
+int b;
+
+int gcd(a, b)
+{
+while ((bool : (int : a) != (int : b))) {
+if ((bool : (int : b) < (int : a)))
+(int : a = (int : (int : a) - (int : b)));
+else
+(int : b = (int : (int : b) - (int : a)));
+}
+return (int : a);
+}
+
+int main()
+{
+int x;
+int y;
+(int : a = (int : 18));
+(int : b = (int : 9));
+(int : x = (int : 2));
+(int : y = (int : 14));
+(int : print((int : gcd((int : x), (int : y)))));
+(int : print((int : gcd((int : 3), (int : 15)))));
+(int : print((int : gcd((int : 99), (int : 121)))));
+(int : print((int : gcd((int : a), (int : b)))));
+return (int : 0);
+}
