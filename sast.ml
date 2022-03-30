@@ -17,7 +17,7 @@ and sx =
   | STranspose of string * typ
   | SLenRow of int
   | SLenCol of int
-  | SAccess of string * sexpr * sexpr
+  | SMatrix of sexpr list list
   | SNoexpr
 
 type sstmt =
@@ -53,16 +53,17 @@ let rec string_of_sexpr (t, e) =
       | SBoolLit(false) -> "false"
       | SId(s) -> s
       | SStrLit(l) -> "\"" ^ (String.escaped l) ^ "\""
-      | SMatElem(_) -> "matLit"
-      | SLenRow(s) -> string_of_int s ^ ".row"
-      | SLenCol(s) -> string_of_int s ^ ".col"
-      | STranspose(s,t) -> s ^ ".T"
+      | SMatrix(_,_) -> "matLit"
+      | SLenRow(s) -> string_of_int s ^ "number of rows"
+      | SLenCol(s) -> string_of_int s ^ "number of cols"
+      | STranspose(s,t) -> string_of_typ t ^ " " ^ s ^ "transpose"
       | SBinop(e1, o, e2) ->
         string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
-      | SAccess(s, r, c) -> s ^ "[" ^ string_of_sexpr r ^ "]" ^ "[" ^ string_of_sexpr c ^ "]"
+      | SMatElem(s, r, c) -> s ^ "[" ^ string_of_sexpr r ^ "]" ^ "[" ^ string_of_sexpr c ^ "]"
       | SUnop(o, e) -> string_of_uop o ^ string_of_sexpr e 
       | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
-      | SCall(f, el) ->       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")" ) ^ ")" 
+      | SCall(f, el) ->       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")" 
+    ) ^ ")" 
 
 
 let rec string_of_sstmt = function
