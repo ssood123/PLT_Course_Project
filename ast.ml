@@ -7,6 +7,7 @@ type uop = Neg | Not
 
 type typ = Void  | Int | Bool | Float | String | Matrix of typ * int * int
 
+type bind = typ * string
 
 type expr =
     Literal of int
@@ -14,20 +15,19 @@ type expr =
   | BoolLit of bool
   | StrLit of string
   | Id of string
-  | Binop of expr * op * expr
   | Unop of uop * expr
+  | Binop of expr * op * expr
   | Assign of expr * expr
-  | Call of string * expr list
+  | Call of string * (expr list)
   | Mat of expr list list 
-  | Col of string
-  | Row of string
-  | Tran of string
-  | Access of string * expr * expr
+  | LenCol of string
+  | LenRow of string
+  | Transpose of string
+  | MatElem of string * expr * expr
   | Noexpr
   
 
 
-type bind = typ * string
 
 type stmt =
     Block of stmt list
@@ -86,10 +86,10 @@ let rec string_of_expr = function
   | Assign(v, e) -> string_of_expr v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
-  | Col(s) -> s ^ ".col"
-  | Row(s) -> s ^ ".row"
-  | Tran(s) -> s ^ ".T"
-  | Access(s, r, c) -> s ^ "[" ^ string_of_expr r ^ "]" ^ "[" ^ string_of_expr c ^ "]"
+  | LenCol(m) -> "lenCol(" ^ m ^ ")"
+  | LenRow(m) -> "lenRow(" ^ m ^ ")"
+  | Transpose(m) -> "transpose(" ^  m ^ ")"
+  | MatElem(m, r, c) -> m ^ "[" ^ string_of_expr r ^ "]" ^ "[" ^ string_of_expr c ^ "]"
   | Noexpr -> ""
 
 let rec string_of_stmt = function
@@ -110,7 +110,7 @@ let string_of_typ = function
   | Bool -> "bool"
   | Float -> "float"
   | Void -> "void"
-  | String -> "String"
+  | String -> "string"
   | Matrix(_, r, c) -> "matrix [" ^ (string_of_int r) ^ "][" ^ string_of_int c ^ "]"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
@@ -124,5 +124,6 @@ let string_of_fdecl fdecl =
   "}\n"
 
 let string_of_program (vars, funcs) =
+  "\n\nParsed program: \n\n" ^
   String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs)

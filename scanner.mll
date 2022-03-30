@@ -1,6 +1,7 @@
 (* Ocamllex scanner for Red-Pandas *)
 
 { open Parser }
+let digit = ['0' - '9']
 
 
 rule token = parse
@@ -30,8 +31,8 @@ rule token = parse
 | "if"     { IF }
 | "true"   { BOOLLIT(true)  }
 | "false"  { BOOLLIT(false) }
-| "colLen"    { LENCOL }
-| "rowLen"    { LENROW }
+| "lenCol"    { LENCOL }
+| "lenRow"    { LENROW }
 | "function"    { FUNC }
 | ","      { COMMA }
 | "+"      { PLUS }
@@ -43,7 +44,7 @@ rule token = parse
 | "-."      { MINUSELEM }
 | "*."     { TIMESELEM }
 | "/."     { DIVIDEELEM }
-| "TP"      { TRANSPOSE }
+| "transpose" { TRANSPOSE }
 | "="      { ASSIGN }
 | "=="     { EQ }
 | "~="     { NEQ }
@@ -52,8 +53,8 @@ rule token = parse
 | ">"      { GT }
 | ">="     { GEQ }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*     as tmp { ID(tmp) }
-| ['0'-'9']+ as tmp { LITERAL(int_of_string tmp) }
-| ['0'-'9']+ '.' ['0'-'9']* as tmp { FLOATLIT(tmp) }
+| digit+ as tmp { LITERAL(int_of_string tmp) }
+| digit+ '.' digit* (['e' 'E'] ['+' '-']? digit+)? as tmp { FLOATLIT(tmp) }
 | '"' (['a'-'z' 'A' - 'Z']+ as tmp) '"' { STRINGLIT(tmp) }
 | eof { EOF }
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }

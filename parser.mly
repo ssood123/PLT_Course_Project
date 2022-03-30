@@ -112,10 +112,10 @@ expr:
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN        { $2            }
   | LBRACK mat_opt RBRACK     { Mat($2)       }
-  | LENCOL LPAREN ID RPAREN            { Col($3)       }
-  | LENROW LPAREN ID RPAREN           { Row($3)       }
-  | TRANSPOSE LPAREN ID RPAREN       { Tran($3)      }
-  | ID LBRACK expr RBRACK LBRACK expr RBRACK { Access($1, $3, $6)    }
+  | LENCOL LPAREN ID RPAREN            { LenCol($3)       }
+  | LENROW LPAREN ID RPAREN           { LenRow($3)       }
+  | TRANSPOSE LPAREN ID RPAREN       { Transpose($3)      }
+  | ID LBRACK expr RBRACK LBRACK expr RBRACK { MatElem($1, $3, $6)    }
   | expr PLUS   expr { Binop($1, Add,   $3)   }
   | expr MINUS  expr { Binop($1, Sub,   $3)   }
   | expr TIMES  expr { Binop($1, Mult,  $3)   }
