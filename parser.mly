@@ -108,7 +108,7 @@ expr:
   | STRINGLIT           { StrLit($1)             }
   | MINUS expr %prec NOT { Unop(Neg, $2)      }
   | NOT expr         { Unop(Not, $2)          }
-  | expr ASSIGN expr   { Assign($1, $3)       }
+  | ID ASSIGN expr   { Assign($1, $3)       }
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN        { $2            }
   | LBRACK mat_opt RBRACK     { Mat($2)       }

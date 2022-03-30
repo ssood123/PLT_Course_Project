@@ -103,13 +103,13 @@ let check (globals, functions) =
 		does the matrix need to check that its values are 
 		all the same or does it just overwrite them?
 *)
-      | Assign(var, e) as ex ->
-        let lt = type_of_identifier var
-        and (rt, e') = check_expr e in
+      | Assign(e1, e2) as ex ->
+        let lt = type_of_identifier e1
+        and (rt, e2') = check_expr e2 in
         let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
                   string_of_typ rt ^ " in " ^ string_of_expr ex
         in
-        (check_assign lt rt err, SAssign(var, (rt, e')))
+        (check_assign lt rt err, SAssign(e1, (rt, e2')))
 
       | Binop(e1, op, e2) as e ->
 (* TODO:\\ Missing  Mult | Div | Leq | Greater | Geq |  Eladd | Elsub | Elmult | Eldiv | Mod
@@ -145,7 +145,7 @@ let check (globals, functions) =
                in (check_assign ft et err, e')
           in
           let args' = List.map2 check_call fd.formals args
-          in (fd.rtyp, SCall(fname, args'))
+          in (fd.typ, SCall(fname, args'))
     in
 
     let check_bool_expr e =
@@ -171,12 +171,12 @@ let check (globals, functions) =
         SWhile(check_bool_expr e, check_stmt st)
       | Return e ->
         let (t, e') = check_expr e in
-        if t = func.rtyp then SReturn (t, e')
+        if t = func.typ then SReturn (t, e')
         else raise (
             Failure ("return gives " ^ string_of_typ t ^ " expected " ^
-                     string_of_typ func.rtyp ^ " in " ^ string_of_expr e))
+                     string_of_typ func.typ ^ " in " ^ string_of_expr e))
     in (* body of check_func *)
-    { srtyp = func.rtyp;
+    { styp = func.typ;
       sfname = func.fname;
       sformals = func.formals;
       slocals  = func.locals;

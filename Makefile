@@ -1,6 +1,6 @@
 
 .PHONY: default
-default: begindefaultwords buildtest rundefaulttest testsemantics
+default: begindefaultwords buildtest rundefaulttest defaulttestsemantics
 	
 begindefaultwords:
 	@echo "running default behaviour"
@@ -14,9 +14,19 @@ rundefaulttest:
 	./test.native < exampleinput.txt
 	@echo "finished default test"
 runtest:
-	@echo "running test":
+	@echo "running scanner parser ast test. Input test string: "
 	./test.native
 	@echo "finished test"
+
+
+.PHONY: defaulttestsemantics
+defaulttestsemantics: buildsemtest rundefaultsemtest
+
+rundefaultsemtest:
+	@echo "running default test:"
+	./testsemantics.native < exampleinput.txt
+
+
 
 .PHONY: testsemantics
 testsemantics: buildsemtest runsemtest
@@ -27,7 +37,8 @@ buildsemtest:
 	@echo "finished building the semantics test"
 
 runsemtest:
-	./testsemantics.native
+	@echo "running semantics test. Input test string: "
+	./testsemantics.native 
 
 
 
