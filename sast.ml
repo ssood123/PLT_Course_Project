@@ -8,6 +8,7 @@ and sx =
   | SFliteral of string
   | SBoolLit of bool
 (* Whats the difference between StrLit and SId? *)
+  | SStrLit of string
   | SId of string
   | SBinop of sexpr * op * sexpr
   | SUnop of uop * sexpr
@@ -46,24 +47,24 @@ type sprogram = bind list * sfunc_decl list
 (* Pretty-printing functions *)
 let rec string_of_sexpr (t, e) =
   "(" ^ string_of_typ t ^ " : " ^ (match e with
-        SLiteral(l) -> string_of_int l
+      | SNoexpr -> "No expr" 
+      | SLiteral(l) -> string_of_int l
+      | SFliteral(l) -> (*string_of_float*) l
       | SBoolLit(true) -> "true"
       | SBoolLit(false) -> "false"
       | SId(s) -> s
       | SStrLit(l) -> "\"" ^ (String.escaped l) ^ "\""
       | SMat(_) -> "matLit"
+      | SRow(s) -> s ^ ".row"
+      | SCol(s) -> s ^ ".col"
+      | STran(s) -> s ^ ".T"
       | SBinop(e1, o, e2) ->
         string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
-      | SUnop(o, e) -> string_of_suop o ^ string_of_sexpr e 
-      | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
-      | SCall(f, el) ->
-          f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
-    ) ^ ")"
-      | SCol(s) -> s ^ ".col"
-      | SRow(s) -> s ^ ".row"
-      | STran(s) -> s ^ ".T"
       | SAccess(s, r, c) -> s ^ "[" ^ string_of_sexpr r ^ "]" ^ "[" ^ string_of_sexpr c ^ "]"
-      | SNoexpr -> ""
+      | SUnop(o, e) -> string_of_uop o ^ string_of_sexpr e 
+      | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
+      | SCall(f, el) ->       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")" ) ^ ")" 
+
 
 let rec string_of_sstmt = function
     SBlock(stmts) ->
