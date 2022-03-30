@@ -1,4 +1,4 @@
-(* Ocamllex scanner for Red-Pandas *)
+
 
 { open Parser }
 let digit = ['0' - '9']
