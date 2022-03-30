@@ -46,7 +46,10 @@ bigtest:
 	@echo "test finished building"
 	@echo "running bigtest:"
 	./test.native < semiexhaustivetestinput.txt
-
+	ocamlbuild testsemantics.native
+	@echo "testsemantics finished building"
+	@echo "running bigtest:"
+	./testsemantics.native < semiexhaustivetestinput.txt
 
 
 .PHONY: clean
