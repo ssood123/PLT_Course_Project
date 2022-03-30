@@ -40,8 +40,12 @@ runsemtest:
 	@echo "running semantics test. Input test string: "
 	./testsemantics.native 
 
-
-
+.PHONY: bigtest
+bigtest:
+	ocamlbuild test.native
+	@echo "test finished building"
+	@echo "running bigtest:"
+	./test.native < semiexhaustivetestinput.txt
 
 
 

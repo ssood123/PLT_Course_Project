@@ -1,0 +1,67 @@
+[* test comments *]
+
+[* test function one input *]
+function int addOne(int x){
+
+return x+1;
+}
+
+[* test function multi input *]
+function int smelly(int x, string s, string v){
+
+return x+1;
+}
+
+
+
+[* main function with void return *]
+[* test variable declarations *]
+[* test hello world *]
+[* test variable assignement *]
+[*  test int operations *]
+[*test bool operations *]
+
+
+function void main(){
+
+
+
+int x;
+int y;
+string s;
+float f;
+bool b;
+}[* Start of Failure:	
+matrix[5][4] ma; 
+
+
+s="helloworld";
+
+
+
+
+s="yeet";
+bool=true;
+x=0;
+y=1;
+ma[3][1]=5;
+
+
+5+4;
+2*9;
+11/7;
+17-22;
+11%3;
+
+
+
+bool bo1;
+bo1= true or false;
+bo1 = true and true;
+bo1= false and false;
+bo1= false or false;
+bo1= not false;
+
+
+}
+*]
