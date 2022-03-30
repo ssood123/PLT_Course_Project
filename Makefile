@@ -1,6 +1,6 @@
 
 .PHONY: default
-default: begindefaultwords buildtest rundefaulttest
+default: begindefaultwords buildtest rundefaulttest testsemantics
 	
 begindefaultwords:
 	@echo "running default behaviour"
@@ -17,6 +17,23 @@ runtest:
 	@echo "running test":
 	./test.native
 	@echo "finished test"
+
+.PHONY: testsemantics
+testsemantics:
+	begintestingsemanticswords buildsemtest runsemtest
+
+begintestingsemanticswords:
+	@echo "testing the semantics piece"
+buildsemtest:
+	ocamlbuild testsemantics.native
+	@echo "finished building the semantics test"
+runsemtest:
+	./testsemantics.native
+
+
+
+
+
 
 .PHONY: clean
 clean:
