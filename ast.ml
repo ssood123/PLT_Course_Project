@@ -6,7 +6,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 type uop = Neg | Not
 
 type typ = Void  | Int | Bool | Float | String | Matrix of typ * int * int
-(* Array? is this right for the Matrix class? it seems like this would allow nested matrices and its type checking but it can only be ints? *)
+
 
 type expr =
     Literal of int
@@ -110,9 +110,9 @@ let string_of_typ = function
   | Bool -> "bool"
   | Float -> "float"
   | Void -> "void"
-  | String -> "string"
+  | String -> "String"
   | Matrix(_, r, c) -> "matrix [" ^ (string_of_int r) ^ "][" ^ string_of_int c ^ "]"
-(*  | Array ()*)
+
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 
 let string_of_fdecl fdecl =
@@ -124,7 +124,5 @@ let string_of_fdecl fdecl =
   "}\n"
 
 let string_of_program (vars, funcs) =
-  "\n\nParsed program: \n\n" ^
-  String.concat "" (List.map string_of_vdecl vars)  ^
-  String.concat "" (List.map string_of_fdecl funcs) ^
-  "\n"
+  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
+  String.concat "\n" (List.map string_of_fdecl funcs)

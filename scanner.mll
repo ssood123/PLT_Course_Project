@@ -1,10 +1,10 @@
-(* Ocamllex scanner for Red-Pandas?????????? *)
+(* Ocamllex scanner for Red-Pandas *)
 
 { open Parser }
 
 
 rule token = parse
-  [' ' '\t' '\r' '\n' ] { token lexbuf } (* Whitespace *)
+  [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
 | "[*"     { comment lexbuf }           (* Comments *)
 | "("      { LPAREN }
 | ")"      { RPAREN }
@@ -54,7 +54,7 @@ rule token = parse
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*     as tmp { ID(tmp) }
 | ['0'-'9']+ as tmp { LITERAL(int_of_string tmp) }
 | ['0'-'9']+ '.' ['0'-'9']* as tmp { FLOATLIT(tmp) }
-| '"' (['a'-'z' ' ' 'A' - 'Z']+ as tmp) '"' { STRINGLIT(tmp) }
+| '"' (['a'-'z' 'A' - 'Z']+ as tmp) '"' { STRINGLIT(tmp) }
 | eof { EOF }
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
 

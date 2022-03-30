@@ -1,4 +1,4 @@
-
+/* Ocamlyacc parser for InteGraph */
 
 %{
 open Ast
@@ -10,7 +10,7 @@ open Ast
 %token SEMI COMMA PERIOD
 %token NOT AND OR EQ NEQ LT LEQ GT GEQ
 %token INT FLOAT STRING BOOL MATRIX VOID
-%token TRANSPOSE FUNC LENROW LENCOL ROWNUM RETURN IF FOR WHILE ELSE MOD
+%token TRANSPOSE FUNC LENROW LENCOL LENROW RETURN IF FOR WHILE ELSE MOD
 %token <int> LITERAL
 %token <bool> BOOLLIT
 %token <string> ID
@@ -28,6 +28,7 @@ open Ast
 %left AND
 %left EQ NEQ
 %left LT GT LEQ GEQ
+%left PLUSELEM MINUSELEM
 %left PLUS MINUS
 %left TIMESELEM DIVIDEELEM
 %left TIMES DIVIDE
@@ -40,13 +41,25 @@ program:
 
 decls:
    /* nothing */ { ([], [])               }
- | vdecl decls { (($1 :: fst $2), snd $2) }
- | fdecl decls { (fst $2, ($1 :: snd $2)) }
+ | decls vdecl{ (($2 :: fst $1), snd $1) }
+ | decls fdecl { (fst $1, ($2 :: snd $1)) }
+
+fdecl:
+   FUNC typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+     { 
+        { 
+            typ = $2;
+           fname = $3;
+           formals = $5;
+           locals = $8;
+           body = $9 
+        } 
+    }
 
 
 vdecl_list:
     /* nothing */    { [] }
-  | vdecl vdecl_list { $1 :: $2 }
+  | vdecl_list vdecl { $2 :: $1 }
 
 vdecl:
    typ ID SEMI { ($1, $2) }
@@ -59,17 +72,6 @@ typ:
   | STRING     { String        }
   | typ MATRIX LBRACK LITERAL RBRACK LBRACK LITERAL RBRACK   { Matrix($1, $4, $7) }
 
-fdecl:
-   FUNC typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
-     { 
-        { 
-            typ = $2;
-	       fname = $3;
-	       formals = $5;
-	       locals = $8;
-	       body = $9 
-        } 
-    }
 
 formals_opt:
     /* nothing */ { [] }
@@ -82,7 +84,7 @@ formal_list:
 
 stmt_list:
     /* nothing */  { [] }
-  | stmt stmt_list { $1 :: $2 }
+  | stmt_list stmt { $2 :: $1 }
 
 stmt:
     expr SEMI                               { Expr $1               }
@@ -110,9 +112,9 @@ expr:
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN        { $2            }
   | LBRACK mat_opt RBRACK     { Mat($2)       }
-  | ID PERIOD LENCOL            { Col($1)       }
-  | ID PERIOD LENROW             { Row($1)       }
-  | ID PERIOD TRANSPOSE          { Tran($1)      }
+  | LENCOL LPAREN ID RPAREN            { Col($3)       }
+  | LENROW LPAREN ID RPAREN           { Row($3)       }
+  | TRANSPOSE LPAREN ID RPAREN       { Tran($3)      }
   | ID LBRACK expr RBRACK LBRACK expr RBRACK { Access($1, $3, $6)    }
   | expr PLUS   expr { Binop($1, Add,   $3)   }
   | expr MINUS  expr { Binop($1, Sub,   $3)   }
@@ -138,7 +140,7 @@ args_opt:
 
 args:
     expr                    { [$1] }
-  | expr COMMA args { $1 :: $3 }
+  | args COMMA expr { $3 :: $1 }
 
 mat_opt:
     /* nothing */ { [] }
@@ -151,4 +153,4 @@ row_list:
 row_single:
     /* nothing */            { []       }
   | expr                     { [$1]    }
-  | expr COMMA  row_single    { $1 :: $3 }
+  | row_single COMMA expr    { $3 :: $1 }
