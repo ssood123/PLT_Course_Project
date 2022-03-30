@@ -10,11 +10,10 @@ open Ast
 %token SEMI COMMA PERIOD
 %token NOT AND OR EQ NEQ LT LEQ GT GEQ
 %token INT FLOAT STRING BOOL MATRIX VOID
-%token TRANSPOSE FUNC LENROW LENCOL LENROW RETURN IF FOR WHILE ELSE MOD
+%token TRANSPOSE FUNC LENROW LENCOL RETURN IF FOR WHILE ELSE MOD
 %token <int> LITERAL
 %token <bool> BOOLLIT
-%token <string> ID
-%token <string> FLOATLIT
+%token <string> ID FLOATLIT
 %token <string> STRINGLIT
 %token EOF
 
@@ -28,10 +27,10 @@ open Ast
 %left AND
 %left EQ NEQ
 %left LT GT LEQ GEQ
-%left PLUSELEM MINUSELEM
+%left PLUSELEM MINUSELEM 
 %left PLUS MINUS
 %left TIMESELEM DIVIDEELEM
-%left TIMES DIVIDE
+%left TIMES DIVIDE MOD
 %right NOT
 
 %%
@@ -79,7 +78,7 @@ formals_opt:
 
 formal_list:
     typ ID                   { [($1,$2)]     }
-  | typ ID COMMA formal_list { ($1,$2) :: $4 }
+  | formal_list COMMA typ ID { ($3,$4) :: $1 }
 
 
 stmt_list:
