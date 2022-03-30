@@ -88,6 +88,8 @@ let check (globals, functions) =
         (check_assign lt rt err, SAssign(var, (rt, e')))
 
       | Binop(e1, op, e2) as e ->
+(* TODO:\\ Missing  Mult | Div | Leq | Greater | Geq |  Eladd | Elsub | Elmult | Eldiv | Mod
+*)
         let (t1, e1') = check_expr e1
         and (t2, e2') = check_expr e2 in
         let err = "illegal binary operator " ^
