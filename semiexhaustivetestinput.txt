@@ -31,8 +31,8 @@ int y;
 string s;
 float f;
 bool b;
-}[* Start of Failure:	
-matrix[5][4] ma; 
+bool bo1;		
+int matrix[5][4] ma; 
 
 
 s="helloworld";
@@ -40,11 +40,13 @@ s="helloworld";
 
 
 
+
 s="yeet";
-bool=true;
+
+b=true;
 x=0;
 y=1;
-ma[3][1]=5;
+
 
 
 5+4;
@@ -55,13 +57,27 @@ ma[3][1]=5;
 
 
 
-bool bo1;
 bo1= true or false;
 bo1 = true and true;
 bo1= false and false;
 bo1= false or false;
+
+bo1= x<y;	
+bo1= x>y;
+bo1= x>=y;
+bo1= x<=y;
+bo1= x~=y;
+
+
+
+}[* Start of Failure:
+x=-1;
+
+
+
+
 bo1= not false;
-
-
+ma[3][1]=5;
+ma[3][1];
 }
 *]

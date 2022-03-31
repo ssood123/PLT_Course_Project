@@ -90,7 +90,11 @@ let check (globals, functions) =
 (* TODO:\\ SUnop, SMat, SCol, SRow, STran, SAccess, SNoexpr,
 		does the matrix need to check that its values are
 		all the same or does it just overwrite them?
+      | Unop (uop, e) -> let (t1, e1')= check_expr e
+	in if t1= Bool then ( Bool, SUnop(uop, e1') )
+	else raise (Failure "Unary Operative Doesnt Work This Way")
 *)
+
       | Assign(e1, e2) as ex ->
         let lt = type_of_identifier e1
         and (rt, e2') = check_expr e2 in
@@ -100,7 +104,7 @@ let check (globals, functions) =
         (check_assign lt rt err, SAssign(e1, (rt, e2')))
 
       | Binop(e1, op, e2) as e ->
-(* TODO:\\ Missing  Mult | Div | Leq | Greater | Geq |  Eladd | Elsub | Elmult | Eldiv | Mod
+(* TODO:\\ Missing  Leq | Greater | Geq |  Eladd | Elsub | Elmult | Eldiv 
 *)
         let (t1, e1') = check_expr e1
         and (t2, e2') = check_expr e2 in
@@ -112,7 +116,7 @@ let check (globals, functions) =
         if t1 = t2 then
           (* Determine expression type based on operator and operand types *)
           let t = match op with
-              Add | Sub | Div| Mult when t1 = Int -> Int
+              Add | Sub | Div| Mult | Mod when t1 = Int -> Int
             | Equal | Neq -> Bool
             | Less | Leq | Geq | Greater when t1 = Int -> Bool
             | And | Or when t1 = Bool -> Bool
