@@ -5,22 +5,9 @@ open Sast
 
 module StringMap = Map.Make(String)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 (* Semantic checking of the AST. Returns an SAST if successful,
    throws an exception if something is wrong.
+
    Check each global variable, then check each function *)
 
 let check (globals, functions) =
@@ -33,15 +20,15 @@ let check (globals, functions) =
         raise (Failure ("duplicate " ^ kind ^ " " ^ n1))
       | _ :: t -> dups t
     in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds)
-  in 
+  in
+
   (* Make sure no globals duplicate *)
   check_binds "global" globals;
-
 
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
     StringMap.add "print" {
-      typ = Int;	
+      typ = Int;
       fname = "print";
       formals = [(Int, "x")];
       locals = []; body = [] } StringMap.empty
@@ -99,8 +86,9 @@ let check (globals, functions) =
       | Fliteral l -> (Float, SFliteral l)
       | BoolLit l -> (Bool, SBoolLit l)
       | Id var -> (type_of_identifier var, SId var)
-(* TODO:\\ SUnop, SMat, SCol, SRow, STran, SAccess, SNoexpr, 
-		does the matrix need to check that its values are 
+      | StrLit l -> (String, SStrLit l)
+(* TODO:\\ SUnop, SMat, SCol, SRow, STran, SAccess, SNoexpr,
+		does the matrix need to check that its values are
 		all the same or does it just overwrite them?
 *)
       | Assign(e1, e2) as ex ->
@@ -124,9 +112,9 @@ let check (globals, functions) =
         if t1 = t2 then
           (* Determine expression type based on operator and operand types *)
           let t = match op with
-              Add | Sub when t1 = Int -> Int
+              Add | Sub | Div| Mult when t1 = Int -> Int
             | Equal | Neq -> Bool
-            | Less when t1 = Int -> Bool
+            | Less | Leq | Geq | Greater when t1 = Int -> Bool
             | And | Or when t1 = Bool -> Bool
             | _ -> raise (Failure err)
           in
@@ -169,6 +157,9 @@ let check (globals, functions) =
         SIf(check_bool_expr e, check_stmt st1, check_stmt st2)
       | While(e, st) ->
         SWhile(check_bool_expr e, check_stmt st)
+      | For(e1, e2, e3, st) ->
+        SFor(check_bool_expr e1, check_bool_expr e2, check_bool_expr e3, check_stmt st)
+        (* Not sure that check bool expr is the correct one *)
       | Return e ->
         let (t, e') = check_expr e in
         if t = func.typ then SReturn (t, e')
@@ -186,10 +177,6 @@ let check (globals, functions) =
   (globals, List.map check_func functions);
 
 
-
-
-
-
-(* 
-helper functions: 
+(*
+helper functions:
 *)

@@ -17,7 +17,7 @@ and sx =
   | STranspose of string * typ
   | SLenRow of int
   | SLenCol of int
-  | SMatrix of sexpr list list
+  | SAccess of string * sexpr * sexpr
   | SNoexpr
 
 type sstmt =
@@ -46,24 +46,23 @@ type sprogram = bind list * sfunc_decl list
 (* Pretty-printing functions *)
 let rec string_of_sexpr (t, e) =
   "(" ^ string_of_typ t ^ " : " ^ (match e with
-      | SNoexpr -> "No expr" 
+      | SNoexpr -> "No expr"
       | SLiteral(l) -> string_of_int l
       | SFliteral(l) -> (*string_of_float*) l
       | SBoolLit(true) -> "true"
       | SBoolLit(false) -> "false"
       | SId(s) -> s
       | SStrLit(l) -> "\"" ^ (String.escaped l) ^ "\""
-      | SMatrix(_,_) -> "matLit"
-      | SLenRow(s) -> string_of_int s ^ "number of rows"
-      | SLenCol(s) -> string_of_int s ^ "number of cols"
-      | STranspose(s,t) -> string_of_typ t ^ " " ^ s ^ "transpose"
+      | SMatElem(_) -> "matLit"
+      | SLenRow(s) -> string_of_int s ^ ".row"
+      | SLenCol(s) -> string_of_int s ^ ".col"
+      | STranspose(s,t) -> s ^ ".T"
       | SBinop(e1, o, e2) ->
         string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
-      | SMatElem(s, r, c) -> s ^ "[" ^ string_of_sexpr r ^ "]" ^ "[" ^ string_of_sexpr c ^ "]"
-      | SUnop(o, e) -> string_of_uop o ^ string_of_sexpr e 
+      | SAccess(s, r, c) -> s ^ "[" ^ string_of_sexpr r ^ "]" ^ "[" ^ string_of_sexpr c ^ "]"
+      | SUnop(o, e) -> string_of_uop o ^ string_of_sexpr e
       | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
-      | SCall(f, el) ->       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")" 
-    ) ^ ")" 
+      | SCall(f, el) ->       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")" ) ^ ")"
 
 
 let rec string_of_sstmt = function
@@ -79,7 +78,7 @@ let rec string_of_sstmt = function
   | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
 
 
-(* does it need this piece?? 
+(* does it need this piece??
 let string_of_styp = function
     Int -> "int"
   | Bool -> "bool"
@@ -107,5 +106,3 @@ let string_of_sprogram (vars, funcs) =
   "\n\nSementically checked program: \n\n" ^
   String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_sfdecl funcs)
-
-
