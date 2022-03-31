@@ -92,7 +92,7 @@ let check (globals, functions) =
 		all the same or does it just overwrite them?
       | Unop (uop, e) -> let (t1, e1')= check_expr e
 	in if t1= Bool then ( Bool, SUnop(uop, e1') )
-	else raise (Failure "Unary Operative Doesnt Work This Way")
+	else raise (Failure "Unary Operative Doesnt Work This Way " ^ string_of_uop uop ^ string_of_expr e)
 *)
 
       | Assign(e1, e2) as ex ->
@@ -104,7 +104,7 @@ let check (globals, functions) =
         (check_assign lt rt err, SAssign(e1, (rt, e2')))
 
       | Binop(e1, op, e2) as e ->
-(* TODO:\\ Missing  Leq | Greater | Geq |  Eladd | Elsub | Elmult | Eldiv 
+(* TODO:\\ Missing    Eladd | Elsub | Elmult | Eldiv 
 *)
         let (t1, e1') = check_expr e1
         and (t2, e2') = check_expr e2 in
