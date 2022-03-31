@@ -20,7 +20,7 @@ type expr =
   | Binop of expr * op * expr
   | Assign of string * expr
   | Call of string * (expr list)
-  | Matrix of expr list list 
+  | Mat of expr list list 
   | LenCol of string
   | LenRow of string
   | Transpose of string
