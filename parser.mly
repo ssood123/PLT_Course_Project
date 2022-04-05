@@ -116,6 +116,11 @@ expr:
   | LENROW LPAREN ID RPAREN           { LenRow($3)       }
   | TRANSPOSE LPAREN ID RPAREN       { Transpose($3)      }
 /* missing assignment for matrix elements */
+  | ID LBRACK expr RBRACK LBRACK expr RBRACK ASSIGN expr {  MatAssign($1, $3, $6, $9)   }
+
+
+
+
   | ID LBRACK expr RBRACK LBRACK expr RBRACK { MatElem($1, $3, $6)    }
   | expr PLUS   expr { Binop($1, Add,   $3)   }
   | expr MINUS  expr { Binop($1, Sub,   $3)   }

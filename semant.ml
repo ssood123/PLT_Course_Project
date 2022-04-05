@@ -87,7 +87,7 @@ let check (globals, functions) =
       | BoolLit l -> (Bool, SBoolLit l)
       | Id var -> (type_of_identifier var, SId var)
       | StrLit l -> (String, SStrLit l)
-(* TODO:\\ SUnop, SMat, SCol, SRow, STran, SAccess, SNoexpr,
+(* TODO:\\ SUnop, SMat, SCol, SRow, STran, SAccess, SNoexpr, SMatElem, SMatAssign
 		does the matrix need to check that its values are
 		all the same or does it just overwrite them?
       | Unop (uop, e) -> let (t1, e1')= check_expr e
@@ -116,7 +116,7 @@ let check (globals, functions) =
         if t1 = t2 then
           (* Determine expression type based on operator and operand types *)
           let t = match op with
-              Add | Sub | Div| Mult | Mod when t1 = Int -> Int
+              Add | Sub | Div | Mult | Mod when t1 = Int -> Int
             | Equal | Neq -> Bool
             | Less | Leq | Geq | Greater when t1 = Int -> Bool
             | And | Or when t1 = Bool -> Bool

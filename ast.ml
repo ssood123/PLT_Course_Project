@@ -27,7 +27,7 @@ type expr =
   | MatElem of string * expr * expr
   | Noexpr
 (* TODO:\\ Missing the logic for assigning an element of a Matrix to an expr. *)
-
+  | MatAssign of string * expr * expr * expr 
 
 
 type stmt =
@@ -92,6 +92,8 @@ let rec string_of_expr = function
   | Transpose(m) -> "transpose(" ^  m ^ ")"
   | MatElem(m, r, c) -> m ^ "[" ^ string_of_expr r ^ "]" ^ "[" ^ string_of_expr c ^ "]"
   | Noexpr -> ""
+(*TODO: MatAssign pretty print *)
+  | MatAssign (s, v1, v2, v3) -> s ^"[" ^ string_of_expr v1 ^ "]" ^ "[" ^ string_of_expr v2 ^ "]" ^ "=" ^ string_of_expr v3
 
 let rec string_of_stmt = function
     Block(stmts) ->
@@ -120,11 +122,11 @@ let string_of_fdecl fdecl =
   "function" ^ " " ^ string_of_typ fdecl.typ ^ " " ^
   fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
   ")\n{\n" ^
-  String.concat "" (List.map string_of_vdecl fdecl.locals) ^
-  String.concat "" (List.map string_of_stmt fdecl.body) ^
+  String.concat "" (List.map string_of_vdecl ( List.rev fdecl.locals ) ) ^
+  String.concat "" (List.map string_of_stmt ( List.rev fdecl.body ) ) ^
   "}\n"
 
 let string_of_program (vars, funcs) =
   "\n\nParsed program: \n\n" ^
-  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
-  String.concat "\n" (List.map string_of_fdecl funcs)
+  String.concat "" (List.map string_of_vdecl ( List.rev vars ) ) ^ "\n" ^
+  String.concat "\n" (List.map string_of_fdecl ( List.rev funcs) )

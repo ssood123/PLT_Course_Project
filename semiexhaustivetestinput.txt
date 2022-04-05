@@ -70,14 +70,21 @@ bo1= x~=y;
 
 
 
+
+
+ma[3][1]=5; [* fails the semantic checker because no target yet *]
+
+
+
 }[* Start of Failure:
+
 x=-1;
 
 
 
 
 bo1= not false;
-ma[3][1]=5;
+
 ma[3][1];
 }
 *]
