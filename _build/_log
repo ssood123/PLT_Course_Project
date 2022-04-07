@@ -1,0 +1,78 @@
+### Starting build.
+# Target: testsemantics.ml.depends, tags: { extension:ml, file:testsemantics.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules testsemantics.ml > testsemantics.ml.depends # cached
+# Target: parser.mly, tags: { extension:mly, file:parser.mly, infer, ocaml, ocamlyacc, parser, quiet }
+ocamlyacc parser.mly # cached
+# Target: parser.mli.depends, tags: { extension:mli, file:parser.mli, ocaml, ocamldep, quiet }
+ocamldep.opt -modules parser.mli > parser.mli.depends # cached
+# Target: ast.ml.depends, tags: { extension:ml, file:ast.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules ast.ml > ast.ml.depends # cached
+# Target: ast.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:ast.cmo, file:ast.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o ast.cmo ast.ml # cached
+# Target: parser.cmi, tags: { byte, compile, extension:mli, file:parser.mli, interf, ocaml, quiet }
+ocamlc.opt -c -o parser.cmi parser.mli # cached
+# Target: sast.ml.depends, tags: { extension:ml, file:sast.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules sast.ml > sast.ml.depends # cached
+# Target: scanner.mll, tags: { extension:mll, file:scanner.mll, lexer, ocaml, ocamllex, quiet }
+ocamllex.opt -q scanner.mll # cached
+# Target: scanner.ml.depends, tags: { extension:ml, file:scanner.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules scanner.ml > scanner.ml.depends # cached
+# Target: scanner.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:scanner.cmo, file:scanner.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o scanner.cmo scanner.ml # cached
+# Target: semant.ml.depends, tags: { extension:ml, file:semant.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules semant.ml > semant.ml.depends
+# Target: sast.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:sast.cmo, file:sast.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o sast.cmo sast.ml
+# Target: semant.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:semant.cmo, file:semant.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o semant.cmo semant.ml
++ ocamlc.opt -c -o semant.cmo semant.ml
+File "semant.ml", lines 84-140, characters 25-42:
+ 84 | .........................function
+ 85 |         Literal l -> (Int, SLiteral l)
+ 86 |       | Fliteral l -> (Float, SFliteral l)
+ 87 |       | BoolLit l -> (Bool, SBoolLit l)
+ 88 |       | Id var -> (type_of_identifier var, SId var)
+...
+137 |                in (check_assign ft et err, e')
+138 |           in
+139 |           let args' = List.map2 check_call fd.formals args
+140 |           in (fd.typ, SCall(fname, args'))
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+(Noexpr|Unop (_, _)|Mat _|LenCol _|LenRow _|Transpose _|MatElem (_, _, _)|
+MatAssign (_, _, _, _))
+# Target: testsemantics.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:testsemantics.cmo, file:testsemantics.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o testsemantics.cmo testsemantics.ml
+# Target: parser.ml.depends, tags: { extension:ml, file:parser.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules parser.ml > parser.ml.depends # cached
+# Target: ast.cmx, tags: { compile, extension:cmx, extension:ml, file:ast.cmx, file:ast.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o ast.cmx ast.ml # cached
+# Target: parser.cmx, tags: { compile, extension:cmx, extension:ml, file:parser.cmx, file:parser.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o parser.cmx parser.ml # cached
+# Target: scanner.cmx, tags: { compile, extension:cmx, extension:ml, file:scanner.cmx, file:scanner.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o scanner.cmx scanner.ml # cached
+# Target: sast.cmx, tags: { compile, extension:cmx, extension:ml, file:sast.cmx, file:sast.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o sast.cmx sast.ml
+# Target: semant.cmx, tags: { compile, extension:cmx, extension:ml, file:semant.cmx, file:semant.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o semant.cmx semant.ml
++ ocamlopt.opt -c -o semant.cmx semant.ml
+File "semant.ml", lines 84-140, characters 25-42:
+ 84 | .........................function
+ 85 |         Literal l -> (Int, SLiteral l)
+ 86 |       | Fliteral l -> (Float, SFliteral l)
+ 87 |       | BoolLit l -> (Bool, SBoolLit l)
+ 88 |       | Id var -> (type_of_identifier var, SId var)
+...
+137 |                in (check_assign ft et err, e')
+138 |           in
+139 |           let args' = List.map2 check_call fd.formals args
+140 |           in (fd.typ, SCall(fname, args'))
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+(Noexpr|Unop (_, _)|Mat _|LenCol _|LenRow _|Transpose _|MatElem (_, _, _)|
+MatAssign (_, _, _, _))
+# Target: testsemantics.cmx, tags: { compile, extension:cmx, extension:ml, file:testsemantics.cmx, file:testsemantics.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o testsemantics.cmx testsemantics.ml
+# Target: testsemantics.native, tags: { dont_link_with, extension:native, file:testsemantics.native, link, native, ocaml, program, quiet }
+ocamlopt.opt ast.cmx parser.cmx sast.cmx scanner.cmx semant.cmx testsemantics.cmx -o testsemantics.native
+# Compilation successful.

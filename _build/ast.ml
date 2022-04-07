@@ -1,7 +1,7 @@
 (* Abstract Syntax Tree and functions for printing it *)
 
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
-          And | Or | AddElem | SubElem | MultElem | DivElem | Mod
+          And | Or | Eladd | Elsub | Elmult | Eldiv | Mod
 
 type uop = Neg | Not
 
@@ -18,18 +18,16 @@ type expr =
   | Id of string
   | Unop of uop * expr
   | Binop of expr * op * expr
-  (* | Assign of expr * expr *)
   | Assign of string * expr
   | Call of string * (expr list)
-  | MatrixDef of (expr list) list 
+  | Mat of expr list list 
   | LenCol of string
   | LenRow of string
   | Transpose of string
-  | Rotate of string
   | MatElem of string * expr * expr
   | Noexpr
-  | MatAssign of string * expr * expr * expr
-
+(* TODO:\\ Missing the logic for assigning an element of a Matrix to an expr. *)
+  | MatAssign of string * expr * expr * expr 
 
 
 type stmt =
@@ -57,10 +55,10 @@ let string_of_op = function
   | Sub -> "-"
   | Mult -> "*"
   | Div -> "/"
-  | AddElem -> "+."
-  | SubElem -> "-."
-  | MultElem-> "*."
-  | DivElem -> "/."
+  | Elmult -> "*."
+  | Eldiv -> "/."
+  | Eladd -> "+."
+  | Elsub -> "-."
   | Equal -> "=="
   | Mod -> "%"
   | Neq -> "~="
@@ -81,21 +79,20 @@ let rec string_of_expr = function
   | BoolLit(true) -> "true"
   | BoolLit(false) -> "false"
   | StrLit(l) -> "\"" ^ (String.escaped l) ^ "\""
-  | MatrixDef(_) -> "matrixDefinition"
+  | Mat(_) -> "matLit"
   | Id(s) -> s
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop(o, e) -> string_of_uop o ^ string_of_expr e
-  (* Assign(v, e) -> string_of_expr v ^ " = " ^ string_of_expr e *)
-  | Assign(v, e) -> v ^ " = " ^ string_of_expr e
+  | Assign(v, e) ->  v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | LenCol(m) -> "lenCol(" ^ m ^ ")"
-  | LenRow(m) -> "lenRow(" ^  m ^ ")"
+  | LenRow(m) -> "lenRow(" ^ m ^ ")"
   | Transpose(m) -> "transpose(" ^  m ^ ")"
-  | Rotate(m) -> "rotate(" ^ m ^ ")" 
   | MatElem(m, r, c) -> m ^ "[" ^ string_of_expr r ^ "]" ^ "[" ^ string_of_expr c ^ "]"
   | Noexpr -> ""
+(*TODO: MatAssign pretty print *)
   | MatAssign (s, v1, v2, v3) -> s ^"[" ^ string_of_expr v1 ^ "]" ^ "[" ^ string_of_expr v2 ^ "]" ^ "=" ^ string_of_expr v3
 
 let rec string_of_stmt = function
@@ -111,14 +108,13 @@ let rec string_of_stmt = function
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 
-
 let string_of_typ = function
     Int -> "int"
   | Bool -> "bool"
   | Float -> "float"
   | Void -> "void"
   | String -> "string"
-  | Matrix(_, r, c) -> "matrix[" ^ (string_of_int r) ^ "][" ^ (string_of_int c) ^ "]" 
+  | Matrix(_, r, c) -> "matrix [" ^ (string_of_int r) ^ "][" ^ string_of_int c ^ "]"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 
@@ -126,12 +122,11 @@ let string_of_fdecl fdecl =
   "function" ^ " " ^ string_of_typ fdecl.typ ^ " " ^
   fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
   ")\n{\n" ^
-  String.concat "" (List.map string_of_vdecl fdecl.locals) ^
-  String.concat "" (List.map string_of_stmt fdecl.body) ^
+  String.concat "" (List.map string_of_vdecl ( List.rev fdecl.locals ) ) ^
+  String.concat "" (List.map string_of_stmt ( List.rev fdecl.body ) ) ^
   "}\n"
 
 let string_of_program (vars, funcs) =
   "\n\nParsed program: \n\n" ^
-  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
-  String.concat "\n" (List.map string_of_fdecl funcs)
-
+  String.concat "" (List.map string_of_vdecl ( List.rev vars ) ) ^ "\n" ^
+  String.concat "\n" (List.map string_of_fdecl ( List.rev funcs) )

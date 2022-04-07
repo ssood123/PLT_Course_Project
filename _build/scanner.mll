@@ -46,7 +46,6 @@ rule token = parse
 | "*."     { TIMESELEM }
 | "/."     { DIVIDEELEM }
 | "transpose" { TRANSPOSE }
-| "rot90"    { ROTATE90 }
 | "="      { ASSIGN }
 | "=="     { EQ }
 | "~="     { NEQ }
