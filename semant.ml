@@ -163,7 +163,6 @@ let check (globals, functions) =
           (* let formals = List.map (fun (tp, var) -> (tp,var)) fd.formals in *)
           let args' = List.map2 check_call fd.formals args
           in (fd.typ, SCall(fname, args'))
-        (* Need to do MatrixDef *)
       | MatElem(m, r, c) -> (let (rowIndex, rowIndex') = expr r in let (colIndex, colIndex') = expr c in
                             match (rowIndex, colIndex) with
                             (Int, Int) -> (match type_of_identifier m with 
