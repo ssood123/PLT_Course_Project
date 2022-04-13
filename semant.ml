@@ -183,20 +183,16 @@ let check (globals, functions) =
       | Rotate(m)    -> (match type_of_identifier m with
                             Matrix(m1,r,c) -> (Matrix(m1,c,r), SRotate(m, Matrix(m1,r,c)))
                             |_ -> raise(Failure "Cannot rotate a non-matrix"))
+      | MatrixDef(arr) -> (let lengthOfFirstElement = List.length (List.hd arr) in
+                              List.map (fun e -> if List.length e != lengthOfFirstElement then raise(Failure "All rows of the array should have the same length.")) arr);
+                          (let typeOfFirstElement = fst (expr (List.hd(List.hd(arr)))) in 
+                            List.map (fun e -> List.map (fun d -> if fst (expr d) != typeOfFirstElement then raise(Failure "All elements of the array need have the same type.")) e) arr);
+                            let sArr = (List.map (fun e -> List.map expr e) arr) in
+                            let (theTyp, _) = expr (List.hd(List.hd(arr))) in
+                            let rows = List.length arr in
+                            let cols = List.length (List.hd arr) in
+                            (Matrix (theTyp, rows, cols), SMatrixDef(theTyp, sArr))
 
-
-
-      (* let (row, row') = expr r in
-                      let(col,col') = expr c in
-                      if (col = Int)
-                        then (if(row = Int)
-                                then ()
-                                else raise(Failure "row value is non-integer");)
-                        else raise(Failure "column value is non-integer");
-                      (match type_of_identifier s with
-                      Matrix(t,_,_) -> (t, SMatElem(s, (row, row'), (col,col')))
-                      | _ -> raise(Failure "Cannot perform access operation on a non-matrix type")
-                      ) *)
 
        
 
