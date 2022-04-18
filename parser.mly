@@ -50,9 +50,9 @@ fdecl:
         { 
             typ = $2;
            fname = $3;
-           formals = $5;
-           locals = $8;
-           body = $9 
+           formals = List.rev $5;
+           locals = List.rev $8;
+           body = List.rev $9 
         } 
     }
 
@@ -88,7 +88,7 @@ stmt_list:
 
 stmt:
     expr SEMI                               { Expr $1               }
-  | LBRACE stmt_list RBRACE                 { Block($2)    }
+  | LBRACE stmt_list RBRACE                 { Block(List.rev $2)    }
   | RETURN expr_opt SEMI                    { Return $2             }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7)        }
@@ -113,7 +113,7 @@ expr:
   | ID ASSIGN expr   { Assign($1, $3)       }
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN        { $2            }
-  | LBRACK matrix_row_list RBRACK     { MatrixDef($2)       }
+  | LBRACK matrix_row_list RBRACK     { MatrixDef(List.rev $2)       }
   | LENCOL LPAREN ID RPAREN            { LenCol($3)       }
   | LENROW LPAREN ID RPAREN           { LenRow($3)       }
   | TRANSPOSE LPAREN ID RPAREN       { Transpose($3)      }
@@ -140,7 +140,7 @@ expr:
                       
 args_opt:
     /* nothing */ { [] }
-  | args { $1 }
+  | args { List.rev $1 }
 
 args:
     expr                    { [$1] }
@@ -148,9 +148,10 @@ args:
 
 
 
+
 matrix_row_list:
-    LBRACK matrix_row_single RBRACK                { [$2]        }
-  | matrix_row_list COMMA LBRACK matrix_row_single RBRACK {  $4 :: $1 }
+    LBRACK matrix_row_single RBRACK                { [(List.rev $2)]        }
+  | matrix_row_list COMMA LBRACK matrix_row_single RBRACK {  (List.rev $4) :: $1 }
 
 matrix_row_single:
     /* nothing */            { []       }
