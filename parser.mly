@@ -7,7 +7,7 @@ open Ast
 %}
 
 %token LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK
-%token PLUS MINUS TIMES DIVIDE PLUSELEM MINUSELEM TIMESELEM DIVIDEELEM ASSIGN
+%token PLUS MINUS TIMES DIVIDE MATRIXPLUSELEM MATRIXMINUSELEM MATRIXTIMESELEM MATRIXDIVIDEELEM ASSIGN
 %token SEMI COMMA PERIOD
 %token NOT AND OR EQ NEQ LT LEQ GT GEQ
 %token INT FLOAT STRING BOOL MATRIX VOID
@@ -28,9 +28,9 @@ open Ast
 %left AND
 %left EQ NEQ
 %left LT GT LEQ GEQ
-%left PLUSELEM MINUSELEM 
+%left MATRIXPLUSELEM MATRIXMINUSELEM 
 %left PLUS MINUS
-%left TIMESELEM DIVIDEELEM
+%left MATRIXTIMESELEM MATRIXDIVIDEELEM
 %left TIMES DIVIDE MOD
 %right NOT
 
@@ -124,10 +124,10 @@ expr:
   | expr MINUS  expr { Binop($1, Sub,   $3)   }
   | expr TIMES  expr { Binop($1, Mult,  $3)   }
   | expr DIVIDE expr { Binop($1, Div,   $3)   }
-  | expr PLUSELEM expr  { Binop($1, AddElem,   $3) }
-  | expr MINUSELEM expr { Binop($1, SubElem,   $3)  }
-  | expr TIMESELEM expr  { Binop($1, MultElem,   $3) }
-  | expr DIVIDEELEM expr { Binop($1, DivElem,   $3)  }
+  | expr MATRIXPLUSELEM expr  { Binop($1, AddElemMat,   $3) }
+  | expr MATRIXMINUSELEM expr { Binop($1, SubElemMat,   $3)  }
+  | expr MATRIXTIMESELEM expr  { Binop($1, MultElemMat,   $3) }
+  | expr MATRIXDIVIDEELEM expr { Binop($1, DivElemMat,   $3)  }
   | expr EQ     expr { Binop($1, Equal, $3)   }
   | expr NEQ    expr { Binop($1, Neq,   $3)   }
   | expr LT     expr { Binop($1, Less,  $3)   }
@@ -145,8 +145,6 @@ args_opt:
 args:
     expr                    { [$1] }
   | args COMMA expr { $3 :: $1 }
-
-
 
 
 matrix_row_list:

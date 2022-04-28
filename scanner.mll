@@ -41,10 +41,10 @@ rule token = parse
 | "*"      { TIMES }
 | "/"      { DIVIDE }
 | "%"      { MOD }
-| "+."     {  PLUSELEM }
-| "-."      { MINUSELEM }
-| "*."     { TIMESELEM }
-| "/."     { DIVIDEELEM }
+| "+.."     {  MATRIXPLUSELEM }
+| "-.."      { MATRIXMINUSELEM }
+| "*.."     { MATRIXTIMESELEM }
+| "/.."     { MATRIXDIVIDEELEM }
 | "transpose" { TRANSPOSE }
 | "rot90"    { ROTATE90 }
 | "="      { ASSIGN }

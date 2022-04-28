@@ -127,7 +127,7 @@ let check (globals, functions) =
           let ty = match op with
             Add | Sub | Mult | Div | Mod when same && t1 = Int   -> Int
           | Add | Sub | Mult | Div when same && t1 = Float -> Float
-          | AddElem| SubElem | MultElem| DivElem -> (match (t1, t2) with 
+          | AddElemMat| SubElemMat | MultElemMat | DivElemMat -> (match (t1, t2) with 
                 Matrix(m1,r1,c1), Matrix(m2,r2,c2) ->
                   if m1 != m2 && r1 = r2 && c1 = c2 then raise (Failure "illegal binary operator for matrix of different types")
                   else if m1 = m2 && (r1 != r2 || c1 != c2) then raise (Failure "illegal binary operator for matrix of different sizes")
