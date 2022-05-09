@@ -10,6 +10,7 @@ and sx = SLiteral of int
 | SUnop of uop * sexpr
 (* | SAssign of sexpr * sexpr *)
 | SAssign of string * sexpr
+| SMatAssign of string * sexpr * sexpr * sexpr
 | SCall of string * sexpr list
 | SNoexpr
 | SMatrixDef of typ * (sexpr list list)
@@ -27,7 +28,7 @@ type sstmt =
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SWhile of sexpr * sstmt
 
- type sfunc_decl = 
+ type sfunc_decl =
  {
     styp : typ;
     sfname : string;
@@ -51,19 +52,20 @@ let rec string_of_sexpr (t, e) =
   | SId(s) -> s
   | SLenCol(m) -> "lenCol(" ^ (string_of_int m) ^ ")"
   | SLenRow(m) -> "lenRow(" ^ (string_of_int m) ^ ")"
-  | STranspose (s,m) -> "transpose(" ^ string_of_typ m ^ ")"   
-  | SRotate(s, m) -> "rotate(" ^ string_of_typ m ^ ")"  
+  | STranspose (s,m) -> "transpose(" ^ string_of_typ m ^ ")"
+  | SRotate(s, m) -> "rotate(" ^ string_of_typ m ^ ")"
   | SMatElem (s,e1,e2) -> s ^ "[" ^ string_of_sexpr e1 ^ "]" ^ "[" ^ string_of_sexpr e2 ^ "]"
   | SBinop(e1, o, e2) ->
       string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
   | SUnop(o, e) -> string_of_uop o ^ string_of_sexpr e
   (* | SAssign(e1, e2) -> string_of_sexpr e1 ^ " = " ^ string_of_sexpr e2 *)
-  | SAssign(v, e) ->  v ^ " = " ^ string_of_sexpr e 
+  | SAssign(v, e) ->  v ^ " = " ^ string_of_sexpr e
+  | SMatAssign(s,e1,e2,e3) -> "Matrix "^ s^ " row "^ string_of_sexpr e1 ^ " column "^ string_of_sexpr e2 ^ " equals " ^ string_of_sexpr e3
   | SCall(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
   | SNoexpr -> ""
-              ) ^ ")"         
-  
+              ) ^ ")"
+
 
 let rec string_of_sstmt = function
     SBlock(stmts) ->
