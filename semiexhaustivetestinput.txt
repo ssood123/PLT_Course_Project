@@ -33,6 +33,8 @@ float f;
 bool b;
 bool bo1;		
 int matrix[5][4] ma; 
+float matrix[3][2] ma2; 
+bool matrix[1][1] ma3; 
 
 
 s="helloworld";
@@ -74,6 +76,14 @@ bo1= x~=y;
 
 ma[3][1]=5; [* fails the semantic checker because no target yet *]
 
+ma2[2][2]=3.3; 
+ma3[0][0]=false;
+ 
+
+
+
+
+
 
 
 }[* Start of Failure:
@@ -81,7 +91,7 @@ ma[3][1]=5; [* fails the semantic checker because no target yet *]
 x=-1;
 
 
-
+ma2[2][2]=false; 
 
 bo1= not false;
 

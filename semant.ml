@@ -206,12 +206,15 @@ assignment fits with this matrix
          ( let mtype= type_of_identifier m in
          match mtype with
          Matrix(m1, e1, e2) ->
-          ( let (e3a,e3b)= expr e3 in
-           match m1 with
+          ( let (e3a, e3b)= expr e3 in
+            if m1=e3a then
+          (* match e3a with
             e3a -> (m1, SMatAssign(m,(rowIndex, rowIndex'),(colIndex, colIndex'), (e3a,e3b) ) )
 
             |_-> raise(Failure "Matrix and attempted assignement are incompatible types")
+*)           (m1, SMatAssign(m,(rowIndex, rowIndex'),(colIndex, colIndex'), (e3a,e3b) ) )
 
+          else raise(Failure "Matrix and attempted assignement are incompatible types")
           )
          |_-> raise(Failure "Can only perform matrix assignment to a matrix")
         )
@@ -242,7 +245,7 @@ assignment fits with this matrix
                             let rows = List.length arr in
                             let cols = List.length (List.hd arr) in
                             (Matrix (theTyp, rows, cols), SMatrixDef(theTyp, sArr))
-
+(*check that the types are correct for matrices*)
 
 
 
