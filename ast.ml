@@ -1,4 +1,4 @@
-(* Abstract Syntax Tree and functions for printing it *)
+
 
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
           And | Or | AddElemMat | SubElemMat | MultElemMat | DivElemMat | Mod
@@ -18,7 +18,6 @@ type expr =
   | Id of string
   | Unop of uop * expr
   | Binop of expr * op * expr
-  (* | Assign of expr * expr *)
   | Assign of string * expr
   | Call of string * (expr list)
   | MatrixDef of (expr list) list 

@@ -99,11 +99,6 @@ let check (globals, functions) =
       | Noexpr     -> (Void, SNoexpr)
       | Id s       -> (type_of_identifier s, SId s)
       | Assign(var, e) as ex ->
-          (* let (lt, var') = expr var
-          and (rt, e') = expr e in
-          let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
-            string_of_typ rt ^ " in " ^ string_of_expr ex
-          in (check_assign lt rt err, SAssign((lt, var'), (rt, e'))) *)
           let lt = type_of_identifier var
           and (rt,e') = expr e in
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
@@ -134,11 +129,6 @@ let check (globals, functions) =
                   else if m1 != m2 && (r1 != r2 || c1 != c2) then raise (Failure "illegal binary operator for matrix of different types and sizes")
                   else Matrix(m1,r1,c1)
                 | _ -> raise (Failure "Not valid"))
-          (* | Mult  -> (match t1, t2 with
-                Matrix(s1,a1,b1), Matrix(s2,a2,b2) ->
-                  if s1=s2 && b1 = a2 then Matrix(s1,a1,b2)
-                  else raise (Failure "illegal dimensions for matrix mult")
-                  | _ -> raise (Failure "bad")) *)
           | Equal | Neq            when same               -> Bool
           | Less | Leq | Greater | Geq
                      when same && (t1 = Int || t1 = Float) -> Bool
@@ -160,7 +150,6 @@ let check (globals, functions) =
               " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
             in (check_assign ft et err, e')
           in
-          (* let formals = List.map (fun (tp, var) -> (tp,var)) fd.formals in *)
           let args' = List.map2 check_call fd.formals args
           in (fd.typ, SCall(fname, args'))
       | MatElem(m, r, c) -> (let (rowIndex, rowIndex') = expr r in let (colIndex, colIndex') = expr c in

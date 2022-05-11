@@ -117,11 +117,6 @@ let translate (globals, functions) =
                    with Not_found -> StringMap.find n global_vars
     in
 
-    let accessValue s r c builder a = 
-      let specific = L.build_gep (lookup s) [|L.const_int i32_t 0; r; c|] s builder in
-      if a then specific else L.build_load specific s builder
-    in
-
     (* Construct code for an expression; return its value *)
     let rec expr builder ((_, e) : sexpr) = match e with
 	    SLiteral i  -> L.const_int i32_t i
@@ -149,7 +144,6 @@ let translate (globals, functions) =
                         let tempAlloc = L.build_alloca (array_t (array_t i32_t c) r) "tempMatrix" builder in
                         for i=0 to (c-1) do
                             for j=0 to (r-1) do
-                                (* let temp = accessValue s (L.const_int i32_t i) (L.const_int i32_t j) builder false in *)
                                 let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j|] s builder in
                                 let temp = L.build_load getTheElementPtr s builder in
                                 let l = L.build_gep tempAlloc [| L.const_int i32_t 0; L.const_int i32_t j; L.const_int i32_t i |] "tempMatrix" builder in 
@@ -161,7 +155,6 @@ let translate (globals, functions) =
                         let tempAlloc = L.build_alloca (array_t (array_t float_t c) r) "tempMatrix" builder in
                         for i=0 to (c-1) do
                             for j=0 to (r-1) do
-                                (* let temp = accessValue s (L.const_int i32_t i) (L.const_int i32_t j) builder false in *)
                                 let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j|] s builder in
                                 let temp = L.build_load getTheElementPtr s builder in
                                 let l = L.build_gep tempAlloc [| L.const_int i32_t 0; L.const_int i32_t j; L.const_int i32_t i |] "tempMatrix" builder in 
@@ -169,8 +162,9 @@ let translate (globals, functions) =
                             done
                         done;
                         L.build_load (L.build_gep tempAlloc [| L.const_int i32_t 0 |] "tempMatrix" builder) "tempMatrix" builder)
+                
       | SMatElem (s,r,c) -> let a = expr builder r and b = expr builder c in
-                          ((*accessValue s a b builder false*) 
+                          (
                             let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; a; b|] s builder in L.build_load getTheElementPtr s builder)
       | SBinop ((A.Float,_ ) as e1, op, e2) ->
           let e1' = expr builder e1
@@ -224,10 +218,8 @@ let translate (globals, functions) =
                                     let temp = L.build_alloca (array_t (array_t i32_t c2) r1) "tmpmat" builder in
                                     for i = 0 to (r1-1) do
                                       for j = 0 to (c2-1) do
-                                        (* let mat1 = accessValue str1 (L.const_int i32_t i) (L.const_int i32_t j) builder false in *)
                                         let getTheElementPtr1 = L.build_gep (lookup str1) [|L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j|] str1 builder in
                                         let mat1 = L.build_load getTheElementPtr1 str1 builder in
-                                        (* let mat2 = accessValue str2 (L.const_int i32_t i) (L.const_int i32_t j) builder false in *)
                                         let getTheElementPtr2 = L.build_gep (lookup str2) [|L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j|] str2 builder in
                                         let mat2 = L.build_load getTheElementPtr2 str2 builder in
                                        let final =  match op with 
@@ -244,10 +236,8 @@ let translate (globals, functions) =
                                     let temp = L.build_alloca (array_t (array_t float_t c2) r1) "tmpmat" builder in
                                     for i = 0 to (r1-1) do
                                       for j = 0 to (c2-1) do
-                                        (* let mat1 = accessValue str1 (L.const_int i32_t i) (L.const_int i32_t j) builder false in *)
                                         let getTheElementPtr1 = L.build_gep (lookup str1) [|L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j|] str1 builder in
                                         let mat1 = L.build_load getTheElementPtr1 str1 builder in                                        
-                                        (* let mat2 = accessValue str2 (L.const_int i32_t i) (L.const_int i32_t j) builder false in *)
                                         let getTheElementPtr2 = L.build_gep (lookup str2) [|L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j|] str2 builder in
                                         let mat2 = L.build_load getTheElementPtr2 str2 builder in
                                        let final =  match op with 
