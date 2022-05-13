@@ -1,11 +1,11 @@
 
 
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
-          And | Or | AddElemMat | SubElemMat | MultElemMat | DivElemMat | Mod
+          And | Or | AddElemArr | SubElemArr | MultElemArr | DivElemArr | AddElemMat | SubElemMat | MultElemMat | DivElemMat | Mod
 
 type uop = Neg | Not
 
-type typ = Void  | Int | Bool | Float | String | Matrix of typ * int * int
+type typ = Void  | Int | Bool | Float | String | Array of typ * int | Matrix of typ * int * int 
 
 type bind = typ * string
 
@@ -20,11 +20,14 @@ type expr =
   | Binop of expr * op * expr
   | Assign of string * expr
   | Call of string * (expr list)
-  | MatrixDef of (expr list) list 
+  | ArrayDef of (expr list)
+  | MatrixDef of (expr list) list
+  | LenArr of string 
   | LenCol of string
   | LenRow of string
   | Transpose of string
   | Rotate of string
+  | ArrElem of string * expr
   | MatElem of string * expr * expr
   | Noexpr
   | MatAssign of string * expr * expr * expr
@@ -56,6 +59,10 @@ let string_of_op = function
   | Sub -> "-"
   | Mult -> "*"
   | Div -> "/"
+  | AddElemArr -> "+."
+  | SubElemArr -> "-."
+  | MultElemArr -> "*."
+  | DivElemArr -> "/."
   | AddElemMat -> "+.."
   | SubElemMat -> "-.."
   | MultElemMat-> "*.."
@@ -81,6 +88,7 @@ let rec string_of_expr = function
   | BoolLit(false) -> "false"
   | StrLit(l) -> "\"" ^ (String.escaped l) ^ "\""
   | MatrixDef(_) -> "matrixDefinition"
+  | ArrayDef(_) -> "arrayDefinition"
   | Id(s) -> s
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
@@ -88,10 +96,12 @@ let rec string_of_expr = function
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
+  | LenArr(a) -> "lenArr(" ^ a ^ ")"
   | LenCol(m) -> "lenCol(" ^ m ^ ")"
   | LenRow(m) -> "lenRow(" ^  m ^ ")"
   | Transpose(m) -> "transpose(" ^  m ^ ")"
   | Rotate(m) -> "rotate(" ^ m ^ ")" 
+  | ArrElem(a,l) -> a ^ "[" ^ string_of_expr l ^ "]"
   | MatElem(m, r, c) -> m ^ "[" ^ string_of_expr r ^ "]" ^ "[" ^ string_of_expr c ^ "]"
   | Noexpr -> ""
   | MatAssign (s, v1, v2, v3) -> s ^"[" ^ string_of_expr v1 ^ "]" ^ "[" ^ string_of_expr v2 ^ "]" ^ "=" ^ string_of_expr v3
@@ -116,6 +126,7 @@ let string_of_typ = function
   | Float -> "float"
   | Void -> "void"
   | String -> "string"
+  | Array(_,l) -> "array[" ^ (string_of_int l) ^ "]"
   | Matrix(_, r, c) -> "matrix[" ^ (string_of_int r) ^ "][" ^ (string_of_int c) ^ "]" 
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"

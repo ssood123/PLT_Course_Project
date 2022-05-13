@@ -8,15 +8,18 @@ and sx = SLiteral of int
 | SId of string
 | SBinop of sexpr * op * sexpr
 | SUnop of uop * sexpr
-(* | SAssign of sexpr * sexpr *)
 | SAssign of string * sexpr
+| SArrAssign of string * sexpr * sexpr
 | SMatAssign of string * sexpr * sexpr * sexpr
 | SCall of string * sexpr list
 | SNoexpr
+| SArrayDef of typ * (sexpr list)
 | SMatrixDef of typ * (sexpr list list)
+| SLenArr of int
 | SLenRow of int
 | SLenCol of int
 | SStrLit of string
+| SArrElem of string * sexpr
 | SMatElem of string * sexpr * sexpr
 | STranspose of string * typ
 | SRotate of string * typ
@@ -48,12 +51,15 @@ let rec string_of_sexpr (t, e) =
   | SBoolLit(false) -> "false"
   | SStrLit(l) -> "\"" ^ (String.escaped l) ^ "\""
   | SFliteral(l) -> l
+  | SArrayDef(_,_) -> "arrayDefinition"
   | SMatrixDef(_,_) -> "matrixDefinition"
   | SId(s) -> s
+  | SLenArr(a) -> "lenRow(" ^ (string_of_int a) ^ ")"
   | SLenCol(m) -> "lenCol(" ^ (string_of_int m) ^ ")"
   | SLenRow(m) -> "lenRow(" ^ (string_of_int m) ^ ")"
   | STranspose (s,m) -> "transpose(" ^ string_of_typ m ^ ")"
   | SRotate(s, m) -> "rotate(" ^ string_of_typ m ^ ")"
+  | SArrElem(s,e1) -> s ^ "[" ^ string_of_sexpr e1 ^ "]"
   | SMatElem (s,e1,e2) -> s ^ "[" ^ string_of_sexpr e1 ^ "]" ^ "[" ^ string_of_sexpr e2 ^ "]"
   | SBinop(e1, o, e2) ->
       string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2

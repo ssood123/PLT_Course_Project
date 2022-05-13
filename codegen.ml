@@ -43,6 +43,11 @@ let translate (globals, functions) =
     | A.Float -> float_t
     | A.Void  -> void_t
     | A.String -> pointer_t i8_t
+    | A.Array(a,l) ->
+          (match a with
+            A.Int    -> array_t i32_t l
+          | A.Float  -> array_t float_t l
+          | _        -> raise(Failure "An array can't have this type"))
     | A.Matrix(m,r,c) -> 
           (match m with
             A.Int    -> array_t (array_t i32_t c) r
@@ -127,6 +132,15 @@ let translate (globals, functions) =
                           ignore(L.build_store e' (lookup s) builder); e'
       | SNoexpr     -> L.const_int i32_t 0
       | SId s       -> L.build_load (lookup s) s builder
+      | SArrayDef (t, arr) -> 
+         let innertype =  match t with 
+                A.Float -> float_t
+                | A.Int -> i32_t
+                | _ -> raise(Failure "The array must have an int or float type")
+          in
+            let lists = List.map (expr builder) arr in
+            let innerArray = Array.of_list lists in
+            L.const_array (innertype) innerArray
       | SMatrixDef (t, mat) -> 
         let innertype = match t with 
                 A.Float -> float_t
@@ -136,6 +150,7 @@ let translate (globals, functions) =
             let innerArray   = List.map Array.of_list ( List.map (List.map (expr builder)) mat ) in
             let listToarray  = Array.of_list ((List.map (L.const_array innertype) innerArray)) in
             L.const_array (array_t innertype (List.length (List.hd mat))) listToarray
+      | SLenArr (l) -> L.const_int i32_t l
       | SLenCol (c)   -> L.const_int i32_t c
       | SLenRow (r)   -> L.const_int i32_t r
       | STranspose (s,t)  -> 
@@ -162,6 +177,10 @@ let translate (globals, functions) =
                             done
                         done;
                         L.build_load (L.build_gep tempAlloc [| L.const_int i32_t 0 |] "tempMatrix" builder) "tempMatrix" builder)
+      | SArrElem (s, l) -> let a = expr builder l in
+                           (
+                            let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; a|] s builder in L.build_load getTheElementPtr s builder)
+                           
                 
       | SMatElem (s,r,c) -> let a = expr builder r and b = expr builder c in
                           (
@@ -214,6 +233,38 @@ let translate (globals, functions) =
           let str1 = (match e1 with (_, SId(s)) -> s | _ -> "") in
           let str2 = (match e2 with (_, SId(s)) -> s | _ -> "") in 
           (match (typ1, typ2) with
+          | (Array(Int, l1), Array(Int, l2)) ->
+                                    let temp = L.build_alloca (array_t i32_t l1) "tempArr" builder in
+                                    for i = 0 to (l1-1) do
+                                        let getTheElementPtr1 = L.build_gep (lookup str1) [|L.const_int i32_t 0; L.const_int i32_t i|] str1 builder in
+                                        let arr1 = L.build_load getTheElementPtr1 str1 builder in
+                                        let getTheElementPtr2 = L.build_gep (lookup str2) [|L.const_int i32_t 0; L.const_int i32_t i|] str2 builder in
+                                        let arr2 = L.build_load getTheElementPtr2 str2 builder in
+                                       let final =  match op with 
+                                        A.AddElemArr -> L.build_add arr1 arr2 "temp" builder 
+                                        | A.SubElemArr ->  L.build_sub arr1 arr2 "temp" builder 
+                                        | A.MultElemArr -> L.build_mul arr1 arr2 "temp" builder
+                                        | A.DivElemArr -> L.build_sdiv arr1 arr2 "temp" builder in
+                                        let l = L.build_gep temp [| L.const_int i32_t 0; L.const_int i32_t i|] "tempArr" builder in
+                                        ignore(L.build_store final l builder);
+                                    done;
+                                    L.build_load (L.build_gep temp [| L.const_int i32_t 0 |] "tempArr" builder) "tempArr" builder
+          | (Array(Float, l1), Array(Float, l2)) ->
+                                    let temp = L.build_alloca (array_t float_t l1) "tempArr" builder in
+                                    for i = 0 to (l1-1) do
+                                        let getTheElementPtr1 = L.build_gep (lookup str1) [|L.const_int i32_t 0; L.const_int i32_t i|] str1 builder in
+                                        let arr1 = L.build_load getTheElementPtr1 str1 builder in
+                                        let getTheElementPtr2 = L.build_gep (lookup str2) [|L.const_int i32_t 0; L.const_int i32_t i|] str2 builder in
+                                        let arr2 = L.build_load getTheElementPtr2 str2 builder in
+                                       let final =  match op with 
+                                        A.AddElemArr -> L.build_fadd arr1 arr2 "temp" builder 
+                                        | A.SubElemArr ->  L.build_fsub arr1 arr2 "temp" builder 
+                                        | A.MultElemArr -> L.build_fmul arr1 arr2 "temp" builder
+                                        | A.DivElemArr -> L.build_fdiv arr1 arr2 "temp" builder in
+                                        let l = L.build_gep temp [| L.const_int i32_t 0; L.const_int i32_t i|] "tempArr" builder in
+                                        ignore(L.build_store final l builder);
+                                    done;
+                                    L.build_load (L.build_gep temp [| L.const_int i32_t 0 |] "tempArr" builder) "tempArr" builder
           | (Matrix(Int, r1, c1), Matrix(Int, r2, c2)) ->
                                     let temp = L.build_alloca (array_t (array_t i32_t c2) r1) "tmpmat" builder in
                                     for i = 0 to (r1-1) do

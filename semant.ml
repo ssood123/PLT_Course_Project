@@ -122,13 +122,20 @@ let check (globals, functions) =
           let ty = match op with
             Add | Sub | Mult | Div | Mod when same && t1 = Int   -> Int
           | Add | Sub | Mult | Div when same && t1 = Float -> Float
+          | AddElemArr | SubElemArr | MultElemArr | DivElemArr -> (match (t1, t2) with
+                Array(a1,l1), Array(a2,l2) ->
+                  if a1 != a2 && l1 = l2 then raise (Failure "illegal binary operator for array of different types")
+                  else if a1 = a2 && l1 != l2 then raise (Failure "illegal binary operator for array of different sizes")
+                  else if a1 != a2 && l1 != l2 then raise (Failure "illegal binary operator for array of different types and sizes")
+                  else Array(a1,l1)
+                | _ -> raise (Failure "Not a valid operation for non-array"))
           | AddElemMat| SubElemMat | MultElemMat | DivElemMat -> (match (t1, t2) with
                 Matrix(m1,r1,c1), Matrix(m2,r2,c2) ->
                   if m1 != m2 && r1 = r2 && c1 = c2 then raise (Failure "illegal binary operator for matrix of different types")
                   else if m1 = m2 && (r1 != r2 || c1 != c2) then raise (Failure "illegal binary operator for matrix of different sizes")
                   else if m1 != m2 && (r1 != r2 || c1 != c2) then raise (Failure "illegal binary operator for matrix of different types and sizes")
                   else Matrix(m1,r1,c1)
-                | _ -> raise (Failure "Not valid"))
+                | _ -> raise (Failure "Not a valid operation for non-matrix"))
           | Equal | Neq            when same               -> Bool
           | Less | Leq | Greater | Geq
                      when same && (t1 = Int || t1 = Float) -> Bool
@@ -152,6 +159,13 @@ let check (globals, functions) =
           in
           let args' = List.map2 check_call fd.formals args
           in (fd.typ, SCall(fname, args'))
+      | ArrElem(a, l) -> (let (index, index') = expr l in
+                            match (index) with
+                            (Int) -> (match type_of_identifier a with
+                              Array(a1, l) -> (a1, SArrElem(a, (index, index')))
+                              |_ -> raise(Failure "Cannot get an element of a non-array")
+                            )
+                            | _ -> raise(Failure "array index is not an integer"))
       | MatElem(m, r, c) -> (let (rowIndex, rowIndex') = expr r in let (colIndex, colIndex') = expr c in
                             match (rowIndex, colIndex) with
                             (Int, Int) -> (match type_of_identifier m with
@@ -212,7 +226,9 @@ assignment fits with this matrix
 )
 
 
-
+      | LenArr(a)     -> (match type_of_identifier a with
+                            Array(a,l) -> (Int, SLenArr(l))
+                            |_ -> raise(Failure "Cannot find length of non-array"))
       | LenRow(m)     ->  (match type_of_identifier m with
                             Matrix(m,r,c) -> (Int, SLenCol(c))
                             |_ -> raise(Failure "Cannot find row value of non-matrix"))
@@ -225,6 +241,12 @@ assignment fits with this matrix
       | Rotate(m)    -> (match type_of_identifier m with
                             Matrix(m1,r,c) -> (Matrix(m1,c,r), SRotate(m, Matrix(m1,r,c)))
                             |_ -> raise(Failure "Cannot rotate a non-matrix"))
+      | ArrayDef(arr) -> (let typeOfFirstElement = fst (expr (List.hd(arr))) in
+                           List.map (fun e -> if fst (expr e) != typeOfFirstElement then raise(Failure "All elements of the array need have the same type.")) arr);
+                          let sArr = (List.map (fun e -> expr e) arr) in
+                          let (theTyp, _) = expr (List.hd(arr)) in
+                          let elemLen = List.length arr in
+                          (Array (theTyp, elemLen), SArrayDef(theTyp, sArr))
       | MatrixDef(arr) -> (let lengthOfFirstElement = List.length (List.hd arr) in
                               List.map (fun e -> if List.length e != lengthOfFirstElement then raise(Failure "All rows of the array should have the same length.")) arr);
                           (let typeOfFirstElement = fst (expr (List.hd(List.hd(arr)))) in
