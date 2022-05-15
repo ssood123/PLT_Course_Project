@@ -221,6 +221,31 @@ let translate (globals, functions) =
                             done
                         done;
                         L.build_load (L.build_gep tempAlloc [| L.const_int i32_t 0 |] "tempMatrix" builder) "tempMatrix" builder)
+      | SFlipColm (s,t) ->
+                    (match t with
+                    Matrix(Int, c, r) ->
+                        let tempAlloc = L.build_alloca (array_t (array_t i32_t c) r) "tempMatrix" builder in
+                        for i=0 to (c-1) do
+                            for j=0 to (c-1-j) do
+                                let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; L.const_int i32_t j; L.const_int i32_t i|] s builder in
+                                let temp = L.build_load getTheElementPtr s builder in
+                                let l = L.build_gep tempAlloc [| L.const_int i32_t 0; L.const_int i32_t (c-1-j); L.const_int i32_t i |] "tempMatrix" builder in 
+                                L.build_store temp l builder 
+                            done
+                        done;
+                        L.build_load (L.build_gep tempAlloc [| L.const_int i32_t 0 |] "tempMatrix" builder) "tempMatrix" builder
+                    | Matrix(Float, c, r) -> 
+                        let tempAlloc = L.build_alloca (array_t (array_t float_t c) r) "tempMatrix" builder in
+                        for i=0 to (c-1) do
+                            for j=0 to (c-1-j) do
+                                let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; L.const_int i32_t j; L.const_int i32_t i|] s builder in
+                                let temp = L.build_load getTheElementPtr s builder in
+                                let l = L.build_gep tempAlloc [| L.const_int i32_t 0; L.const_int i32_t (c-1-j); L.const_int i32_t i |] "tempMatrix" builder in 
+                                L.build_store temp l builder 
+                            done
+                        done;
+                        L.build_load (L.build_gep tempAlloc [| L.const_int i32_t 0 |] "tempMatrix" builder) "tempMatrix" builder)
+			
       | SArrElem (s, l) -> let a = expr builder l in
                            (
                             let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; a|] s builder in L.build_load getTheElementPtr s builder)
