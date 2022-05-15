@@ -228,6 +228,21 @@ let translate (globals, functions) =
       | SMatElem (s,r,c) -> let a = expr builder r and b = expr builder c in
                           (
                             let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; a; b|] s builder in L.build_load getTheElementPtr s builder)
+         
+      | SMatAssign (s,e1,e2,e3) ->
+      	    let a = expr builder e1 and b = expr builder e2 and c = expr builder e3 in
+	(
+	let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; a; b|] s builder in L.build_store  c getTheElementPtr builder 
+	)                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
       | SBinop ((A.Float,_ ) as e1, op, e2) ->
           let e1' = expr builder e1
           and e2' = expr builder e2 in
