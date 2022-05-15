@@ -174,7 +174,57 @@ let check (globals, functions) =
                             )
                             | _ -> raise(Failure "row index or column index is not an integer"))
 
+      | MatAssign(m, e1, e2, e3)->
 
+(*
+first we check if the element is valid then we check if the expression is valid then we check if the
+assignment fits with this matrix
+
+
+          let lt = type_of_identifier var
+          and (rt,e') = expr e in
+          let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
+            string_of_typ rt ^ " in " ^ string_of_expr ex
+          in (check_assign lt rt err, SAssign(var, (rt, e')))
+
+       let (m',e1',e2')= (let (rowIndex, rowIndex') = expr e1 in let (colIndex, colIndex') = expr e2 in
+                             match (rowIndex, colIndex) with
+                             (Int, Int) -> (match type_of_identifier m with
+                               Matrix(m, e1, e2) ->
+
+
+                               (m, SMatElem(m, (rowIndex, rowIndex'), (colIndex, colIndex'))) in
+                               match type_of_identifier expr e3 with type_of_identifier m' -> (m', SMatAssign(m,(rowIndex, rowIndex'),(colIndex,colIndex'), expr e3))
+                               |_ -> raise(Failure "Cannot assign this type of expression to this type of matrix"))
+
+                               |_ -> raise(Failure "Cannot get an element of a non-matrix")
+                             )
+                             | _ -> raise(Failure "row index or column index is not an integer"))
+
+*)
+(
+      let (rowIndex, rowIndex') = expr e1 in
+      let (colIndex, colIndex') =expr e2 in
+      match (rowIndex, colIndex) with
+      (Int, Int)->
+         ( let mtype= type_of_identifier m in
+         match mtype with
+         Matrix(m1, e1, e2) ->
+          ( let (e3a, e3b)= expr e3 in
+            if m1=e3a then
+          (* match e3a with
+            e3a -> (m1, SMatAssign(m,(rowIndex, rowIndex'),(colIndex, colIndex'), (e3a,e3b) ) )
+
+            |_-> raise(Failure "Matrix and attempted assignement are incompatible types")
+*)           (m1, SMatAssign(m,(rowIndex, rowIndex'),(colIndex, colIndex'), (e3a,e3b) ) )
+
+          else raise(Failure "Matrix and attempted assignement are incompatible types")
+          )
+         |_-> raise(Failure "Can only perform matrix assignment to a matrix")
+        )
+      |_-> raise(Failure "Must access matrix elements by Int")
+
+)
 
 
       | LenArr(a)     -> (match type_of_identifier a with
