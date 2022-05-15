@@ -228,12 +228,13 @@ let translate (globals, functions) =
       | SMatElem (s,r,c) -> let a = expr builder r and b = expr builder c in
                           (
                             let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; a; b|] s builder in L.build_load getTheElementPtr s builder)
-         
+      | SArrAssign (s, e1, e2) -> let a = expr builder e1 and b = expr builder e2 in
+            (let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; a|] s builder in L.build_store l getTheElementPtr builder)
       | SMatAssign (s,e1,e2,e3) ->
       	    let a = expr builder e1 and b = expr builder e2 and c = expr builder e3 in
 	(
 	let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; a; b|] s builder in L.build_store  c getTheElementPtr builder 
-	)                            
+	)                           
                             
                             
                             

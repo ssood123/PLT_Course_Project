@@ -175,6 +175,7 @@ let check (globals, functions) =
                             | _ -> raise(Failure "row index or column index is not an integer"))
 
       | MatAssign(m, e1, e2, e3)->
+      | ArrAssign(a, e1, e2) ->
 
 (*
 first we check if the element is valid then we check if the expression is valid then we check if the

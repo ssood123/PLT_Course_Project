@@ -68,6 +68,7 @@ let rec string_of_sexpr (t, e) =
   | SUnop(o, e) -> string_of_uop o ^ string_of_sexpr e
   | SAssign(v, e) ->  v ^ " = " ^ string_of_sexpr e
   | SMatAssign(s,e1,e2,e3) -> "Matrix "^ s^ " row "^ string_of_sexpr e1 ^ " column "^ string_of_sexpr e2 ^ " equals " ^ string_of_sexpr e3
+  | SArrAssign(s,e1,e2) -> "Array "^ s^ "  index "^string_of_sexpr e1 ^ " equals "^ string_of_sexpr e2
   | SCall(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
   | SNoexpr -> ""

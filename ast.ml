@@ -1,7 +1,7 @@
 
 
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
-          And | Or | AddElemArr | SubElemArr | MultElemArr | DivElemArr | AddElemMat | SubElemMat | MultElemMat | DivElemMat 
+          And | Or | AddElemArr | SubElemArr | MultElemArr | DivElemArr | AddElemMat | SubElemMat | MultElemMat | DivElemMat
 
 type uop = Neg | Not
 
@@ -31,6 +31,7 @@ type expr =
   | ArrElem of string * expr
   | MatElem of string * expr * expr
   | MatAssign of string * expr * expr * expr
+  | ArrAssign of string * expr * expr
   | Noexpr
 
 
@@ -105,6 +106,7 @@ let rec string_of_expr = function
   | ArrElem(a,l) -> a ^ "[" ^ string_of_expr l ^ "]"
   | MatElem(m, r, c) -> m ^ "[" ^ string_of_expr r ^ "]" ^ "[" ^ string_of_expr c ^ "]"
   | MatAssign (s, v1, v2, v3) -> s ^"[" ^ string_of_expr v1 ^ "]" ^ "[" ^ string_of_expr v2 ^ "]" ^ "=" ^ string_of_expr v3
+  | ArrAssign (s, v1, v2) -> s ^"[" ^ string_of_expr v1 ^ "]" ^ "[" ^ string_of_expr v2 ^ "]"
   | Noexpr -> ""
 
 let rec string_of_stmt = function
