@@ -133,23 +133,22 @@ let translate (globals, functions) =
       | SNoexpr     -> L.const_int i32_t 0
       | SId s       -> L.build_load (lookup s) s builder
       | SArrayDef (t, arr) -> 
-         let innertype =  match t with 
+         let theType =  match t with 
                 A.Float -> float_t
                 | A.Int -> i32_t
                 | _ -> raise(Failure "The array must have an int or float type")
           in
-            let lists = List.map (expr builder) arr in
-            let innerArray = Array.of_list lists in
-            L.const_array (innertype) innerArray
+            let theArray = Array.of_list (List.map (expr builder) arr) in
+            L.const_array (theType) theArray
       | SMatrixDef (t, mat) -> 
-        let innertype = match t with 
+        let theType = match t with 
                 A.Float -> float_t
                 | A.Int -> i32_t
                 | _ -> raise(Failure "The matrix must have an int or float type")
           in
-            let innerArray   = List.map Array.of_list ( List.map (List.map (expr builder)) mat ) in
-            let listToarray  = Array.of_list ((List.map (L.const_array innertype) innerArray)) in
-            L.const_array (array_t innertype (List.length (List.hd mat))) listToarray
+            let theArray   = List.map Array.of_list ( List.map (List.map (expr builder)) mat ) in
+            let listToarray  = Array.of_list ((List.map (L.const_array theType) theArray)) in
+            L.const_array (array_t theType (List.length (List.hd mat))) listToarray
       | SLenArr (l) -> L.const_int i32_t l
       | SLenCol (c)   -> L.const_int i32_t c
       | SLenRow (r)   -> L.const_int i32_t r
