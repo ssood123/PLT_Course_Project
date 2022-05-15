@@ -172,6 +172,37 @@ let translate (globals, functions) =
                                 L.build_store temp l builder  
                         done;
                         L.build_load (L.build_gep tempAlloc [| L.const_int i32_t 0 |] "tempArray" builder) "tempArray" builder)
+      | SMatAssign (s, t, e1, e2, e3) ->
+          let e1' = expr builder e1
+          and e2' = expr builder e2
+          and e3' = expr builder e3 in
+          (match t with
+                    Matrix(Int, c, r) ->
+                        let tempAlloc = L.build_alloca (array_t (array_t i32_t c) r) "tempMatrix" builder in
+                        for i=0 to (c-1) do
+                            for j=0 to (r-1) do
+                                let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j|] s builder in
+                                let temp = L.build_load getTheElementPtr s builder in
+                                if i=e1 and j=e3 let temp = e3 in
+                                let l = L.build_gep tempAlloc [| L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j |] "tempMatrix" builder in 
+                                L.build_store temp l builder 
+                            done
+                        done;
+                        L.build_load (L.build_gep tempAlloc [| L.const_int i32_t 0 |] "tempMatrix" builder) "tempMatrix" builder
+                    | Matrix(Float, c, r) ->
+                        let tempAlloc = L.build_alloca (array_t (array_t float_t c) r) "tempMatrix" builder in
+                        for i=0 to (c-1) do
+                          for j=0 to (r-1) do
+                              let getTheElementPtr = L.build_gep (lookup s) [|L.const_float float_t 0; L.const_float float_t i; L.const_float float_t j|] s builder in
+                              let temp = L.build_load getTheElementPtr s builder in
+                              if i=e1 and j=e3 let temp = e3 in
+                              let l = L.build_gep tempAlloc [| L.const_float float_t 0; L.const_float float_t i; L.const_float float_t j |] "tempMatrix" builder in 
+                              L.build_store temp l builder 
+                          done
+                        done;
+                        L.build_load (L.build_gep tempAlloc [| L.const_float float_t 0 |] "tempMatrix" builder) "tempMatrix" builder)
+          
+
       | SRotate(s,t) -> 
                     (match t with
                     Matrix(Int, c, r) ->
