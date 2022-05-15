@@ -153,6 +153,50 @@ let translate (globals, functions) =
       | SLenArr (l) -> L.const_int i32_t l
       | SLenCol (c)   -> L.const_int i32_t c
       | SLenRow (r)   -> L.const_int i32_t r
+      | SReverse(s,t) ->
+                    (match t with
+                    Array(Int, l) ->
+                        let tempAlloc = L.build_alloca (array_t i32_t l) "tempArray" builder in
+                        for i=0 to (l-1) do
+                                let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; L.const_int i32_t i|] s builder in
+                                let temp = L.build_load getTheElementPtr s builder in
+                                let l = L.build_gep tempAlloc [| L.const_int i32_t 0; L.const_int i32_t (l-i-1)|] "tempArray" builder in
+                                L.build_store temp l builder  
+                        done;
+                        L.build_load (L.build_gep tempAlloc [| L.const_int i32_t 0 |] "tempArray" builder) "tempArray" builder
+                    | Array(Float, l) -> 
+                        let tempAlloc = L.build_alloca (array_t float_t l) "tempArray" builder in
+                        for i=0 to (l-1) do
+                                let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; L.const_int i32_t i|] s builder in
+                                let temp = L.build_load getTheElementPtr s builder in
+                                let l = L.build_gep tempAlloc [| L.const_int i32_t 0; L.const_int i32_t (l-i-1)|] "tempArray" builder in
+                                L.build_store temp l builder  
+                        done;
+                        L.build_load (L.build_gep tempAlloc [| L.const_int i32_t 0 |] "tempArray" builder) "tempArray" builder)
+      | SRotate(s,t) -> 
+                    (match t with
+                    Matrix(Int, c, r) ->
+                        let tempAlloc = L.build_alloca (array_t (array_t i32_t c) r) "tempMatrix" builder in
+                        for i=0 to (c-1) do
+                            for j=0 to (r-1) do
+                                let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j|] s builder in
+                                let temp = L.build_load getTheElementPtr s builder in
+                                let l = L.build_gep tempAlloc [| L.const_int i32_t 0; L.const_int i32_t (c-1-j); L.const_int i32_t (i) |] "tempMatrix" builder in 
+                                L.build_store temp l builder 
+                            done
+                        done;
+                        L.build_load (L.build_gep tempAlloc [| L.const_int i32_t 0 |] "tempMatrix" builder) "tempMatrix" builder
+                    | Matrix(Float, c, r) -> 
+                        let tempAlloc = L.build_alloca (array_t (array_t float_t c) r) "tempMatrix" builder in
+                        for i=0 to (c-1) do
+                            for j=0 to (r-1) do
+                                let getTheElementPtr = L.build_gep (lookup s) [|L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j|] s builder in
+                                let temp = L.build_load getTheElementPtr s builder in
+                                let l = L.build_gep tempAlloc [| L.const_int i32_t 0; L.const_int i32_t (c-j-1); L.const_int i32_t (i) |] "tempMatrix" builder in 
+                                L.build_store temp l builder 
+                            done
+                        done;
+                        L.build_load (L.build_gep tempAlloc [| L.const_int i32_t 0 |] "tempMatrix" builder) "tempMatrix" builder)
       | STranspose (s,t)  -> 
                     (match t with
                     Matrix(Int, c, r) ->
@@ -225,6 +269,15 @@ let translate (globals, functions) =
           | _ ->  raise (Failure "error: not a viable int to int operation")
           ) e1' e2' "tmp" builder
 
+      | SBinop ((A.Bool,_ ) as e1, op, e2) ->
+          let e1' = expr builder e1
+          and e2' = expr builder e2 in
+          (match op with 
+          | A.And -> L.build_and
+          | A.Or ->  L.build_or
+          | _ ->  raise (Failure "error: not a viable int to int operation")
+          ) e1' e2' "tmp" builder
+
       | SBinop (e1, op, e2) ->
           let e1' = expr builder e1
           and e2' = expr builder e2
@@ -266,7 +319,7 @@ let translate (globals, functions) =
                                     done;
                                     L.build_load (L.build_gep temp [| L.const_int i32_t 0 |] "tempArr" builder) "tempArr" builder
           | (Matrix(Int, r1, c1), Matrix(Int, r2, c2)) ->
-                                    let temp = L.build_alloca (array_t (array_t i32_t c2) r1) "tmpmat" builder in
+                                    let temp = L.build_alloca (array_t (array_t i32_t c2) r1) "tempMat" builder in
                                     for i = 0 to (r1-1) do
                                       for j = 0 to (c2-1) do
                                         let getTheElementPtr1 = L.build_gep (lookup str1) [|L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j|] str1 builder in
@@ -274,17 +327,17 @@ let translate (globals, functions) =
                                         let getTheElementPtr2 = L.build_gep (lookup str2) [|L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j|] str2 builder in
                                         let mat2 = L.build_load getTheElementPtr2 str2 builder in
                                        let final =  match op with 
-                                        A.AddElemMat -> L.build_add mat1 mat2 "tmp" builder 
-                                        | A.SubElemMat ->  L.build_sub mat1 mat2 "tmp" builder 
-                                        | A.MultElemMat -> L.build_mul mat1 mat2 "tmp" builder
-                                        | A.DivElemMat -> L.build_sdiv mat1 mat2 "tmp" builder in
-                                        let l = L.build_gep temp [| L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j |] "tmpmat" builder in
+                                        A.AddElemMat -> L.build_add mat1 mat2 "temp" builder 
+                                        | A.SubElemMat ->  L.build_sub mat1 mat2 "temp" builder 
+                                        | A.MultElemMat -> L.build_mul mat1 mat2 "temp" builder
+                                        | A.DivElemMat -> L.build_sdiv mat1 mat2 "temp" builder in
+                                        let l = L.build_gep temp [| L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j |] "tempMat" builder in
                                         ignore(L.build_store final l builder);
                                       done
                                     done;
-                                    L.build_load (L.build_gep temp [| L.const_int i32_t 0 |] "tmpmat" builder) "tmpmat" builder
+                                    L.build_load (L.build_gep temp [| L.const_int i32_t 0 |] "tempMat" builder) "tempMat" builder
           | (Matrix(Float, r1, c1), Matrix(Float, r2, c2)) ->
-                                    let temp = L.build_alloca (array_t (array_t float_t c2) r1) "tmpmat" builder in
+                                    let temp = L.build_alloca (array_t (array_t float_t c2) r1) "tempMat" builder in
                                     for i = 0 to (r1-1) do
                                       for j = 0 to (c2-1) do
                                         let getTheElementPtr1 = L.build_gep (lookup str1) [|L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j|] str1 builder in
@@ -292,15 +345,15 @@ let translate (globals, functions) =
                                         let getTheElementPtr2 = L.build_gep (lookup str2) [|L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j|] str2 builder in
                                         let mat2 = L.build_load getTheElementPtr2 str2 builder in
                                        let final =  match op with 
-                                        A.AddElemMat -> L.build_fadd mat1 mat2 "tmp" builder 
-                                        | A.SubElemMat ->  L.build_fsub mat1 mat2 "tmp" builder 
-                                        | A.MultElemMat -> L.build_fmul mat1 mat2 "tmp" builder
-                                        | A.DivElemMat -> L.build_fdiv mat1 mat2 "tmp" builder in
+                                        A.AddElemMat -> L.build_fadd mat1 mat2 "temp" builder 
+                                        | A.SubElemMat ->  L.build_fsub mat1 mat2 "temp" builder 
+                                        | A.MultElemMat -> L.build_fmul mat1 mat2 "temp" builder
+                                        | A.DivElemMat -> L.build_fdiv mat1 mat2 "temp" builder in
                                         let l = L.build_gep temp [| L.const_int i32_t 0; L.const_int i32_t i; L.const_int i32_t j |] "tmpmat" builder in
                                         ignore(L.build_store final l builder);
                                       done
                                     done;
-                                    L.build_load (L.build_gep temp [| L.const_int i32_t 0 |] "tmpmat" builder) "tmpmat" builder                         
+                                    L.build_load (L.build_gep temp [| L.const_int i32_t 0 |] "tempMat" builder) "tempMat" builder
                                   
         )
           

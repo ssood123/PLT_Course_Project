@@ -23,15 +23,15 @@ lli example.out
 ### Compiler files
 -  `ast.ml`: abstract syntax tree (AST) definition
 -  `scanner.mll`: scanner
--  `parser.mly`: parser
+-  `microcparse.mly`: parser
 -  `sast.ml`: definition of the semantically-checked AST
 -  `semant.ml`: semantic checking
--  `codegen.ml`: LLVM IR code generator
+-  `irgen.ml`: LLVM IR code generator
 
 ### Other files
 
-- `test.ml`: the file to test the scanner and parser
-- `testsemantics.ml`: the file to test the semantic checker
-- `integraph.ml`: top-level file to test and run integraph compiler
+- `test1.ml`: the file to test the scanner and parser
+- `test2.ml`: the file to test the semantic checker
+- `microc.ml`: top-level file to test and run microc compiler
 - `example.mc`: a sample microc source code
 - `example.out`: a sample compiled code of example.mc

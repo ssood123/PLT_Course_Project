@@ -1,6 +1,5 @@
 
 
-
 { open Parser }
 let digit = ['0' - '9']
 
@@ -43,7 +42,6 @@ rule token = parse
 | "-"      { MINUS }
 | "*"      { TIMES }
 | "/"      { DIVIDE }
-| "%"      { MOD }
 | "+."       { ARRAYPLUSELEM}
 | "+.."     {  MATRIXPLUSELEM }
 | "-."      {ARRAYMINUSELEM}
@@ -52,6 +50,7 @@ rule token = parse
 | "*.."     { MATRIXTIMESELEM }
 | "/."      { ARRAYDIVIDEELEM}
 | "/.."     { MATRIXDIVIDEELEM }
+| "reverse" { REVERSE }
 | "transpose" { TRANSPOSE }
 | "rot90"    { ROTATE90 }
 | "="      { ASSIGN }

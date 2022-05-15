@@ -1,7 +1,7 @@
 
 
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
-          And | Or | AddElemArr | SubElemArr | MultElemArr | DivElemArr | AddElemMat | SubElemMat | MultElemMat | DivElemMat | Mod
+          And | Or | AddElemArr | SubElemArr | MultElemArr | DivElemArr | AddElemMat | SubElemMat | MultElemMat | DivElemMat 
 
 type uop = Neg | Not
 
@@ -22,7 +22,8 @@ type expr =
   | Call of string * (expr list)
   | ArrayDef of (expr list)
   | MatrixDef of (expr list) list
-  | LenArr of string 
+  | LenArr of string
+  | Reverse of string 
   | LenCol of string
   | LenRow of string
   | Transpose of string
@@ -30,7 +31,6 @@ type expr =
   | ArrElem of string * expr
   | MatElem of string * expr * expr
   | Noexpr
-  | MatAssign of string * expr * expr * expr
 
 
 
@@ -68,7 +68,6 @@ let string_of_op = function
   | MultElemMat-> "*.."
   | DivElemMat -> "/.."
   | Equal -> "=="
-  | Mod -> "%"
   | Neq -> "~="
   | Less -> "<"
   | Leq -> "<="
@@ -97,6 +96,7 @@ let rec string_of_expr = function
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | LenArr(a) -> "lenArr(" ^ a ^ ")"
+  | Reverse(a) -> "reverse(" ^ a ^ ")"
   | LenCol(m) -> "lenCol(" ^ m ^ ")"
   | LenRow(m) -> "lenRow(" ^  m ^ ")"
   | Transpose(m) -> "transpose(" ^  m ^ ")"
@@ -104,7 +104,6 @@ let rec string_of_expr = function
   | ArrElem(a,l) -> a ^ "[" ^ string_of_expr l ^ "]"
   | MatElem(m, r, c) -> m ^ "[" ^ string_of_expr r ^ "]" ^ "[" ^ string_of_expr c ^ "]"
   | Noexpr -> ""
-  | MatAssign (s, v1, v2, v3) -> s ^"[" ^ string_of_expr v1 ^ "]" ^ "[" ^ string_of_expr v2 ^ "]" ^ "=" ^ string_of_expr v3
 
 let rec string_of_stmt = function
     Block(stmts) ->

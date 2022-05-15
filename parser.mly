@@ -11,7 +11,7 @@ open Ast
 %token SEMI COMMA PERIOD
 %token NOT AND OR EQ NEQ LT LEQ GT GEQ
 %token INT FLOAT STRING BOOL MATRIX ARRAY VOID
-%token TRANSPOSE ROTATE90 FUNC LENROW LENCOL LENARRAY RETURN IF FOR WHILE ELSE MOD
+%token REVERSE TRANSPOSE ROTATE90 FUNC LENROW LENCOL LENARRAY RETURN IF FOR WHILE ELSE 
 %token <int> LITERAL
 %token <bool> BOOLLIT
 %token <string> ID FLOATLIT
@@ -33,7 +33,7 @@ open Ast
 %left PLUS MINUS
 %left MATRIXTIMESELEM MATRIXDIVIDEELEM
 %left ARRAYTIMESELEM ARRAYDIVIDEELEM
-%left TIMES DIVIDE MOD
+%left TIMES DIVIDE 
 %right NOT
 
 %%
@@ -116,15 +116,15 @@ expr:
   | ID ASSIGN expr   { Assign($1, $3)       }
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN        { $2            }
-  | LBRACK array_list RBRACK           { ArrayDef(List.rev $2)      }
+  | LPAREN array_list RPAREN           { ArrayDef(List.rev $2)      }
   | LBRACK matrix_row_list RBRACK     { MatrixDef(List.rev $2)       }
   | LENARRAY LPAREN ID RPAREN           { LenArr($3) }
+  | REVERSE LPAREN ID RPAREN            { Reverse($3) }
   | LENCOL LPAREN ID RPAREN            { LenCol($3)       }
   | LENROW LPAREN ID RPAREN           { LenRow($3)       }
   | TRANSPOSE LPAREN ID RPAREN       { Transpose($3)      }
   | ROTATE90 LPAREN ID RPAREN          { Rotate($3)         }
   | ID LBRACK expr RBRACK LBRACK expr RBRACK { MatElem($1, $3, $6)    }
-  | ID LBRACK expr RBRACK LBRACK expr RBRACK ASSIGN expr {  MatAssign($1, $3, $6, $9)   }
   | ID LBRACK expr RBRACK {ArrElem($1,$3)   }
   | expr PLUS   expr { Binop($1, Add,   $3)   }
   | expr MINUS  expr { Binop($1, Sub,   $3)   }
@@ -146,7 +146,6 @@ expr:
   | expr GEQ    expr { Binop($1, Geq,   $3)   }
   | expr AND    expr { Binop($1, And,   $3)   }
   | expr OR     expr { Binop($1, Or,    $3)   }
-  | expr MOD    expr {Binop($1, Mod, $3)}
                       
 args_opt:
     /* nothing */ { [] }
@@ -159,7 +158,7 @@ args:
 
 array_list:
    expr     { [$1] }
-   | array_list COMMA expr { $3 :: (List.rev $1)}
+   | array_list COMMA expr { $3 :: ($1)}
 
 
 matrix_row_list:
