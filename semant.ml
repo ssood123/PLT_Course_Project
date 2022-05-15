@@ -173,9 +173,27 @@ let check (globals, functions) =
                               |_ -> raise(Failure "Cannot get an element of a non-matrix")
                             )
                             | _ -> raise(Failure "row index or column index is not an integer"))
+      | ArrAssign(a, e1, e2) ->
+        (
+      let (index, index') = expr e1 in
+      match (index) with
+      (index)->
+         ( let atype= type_of_identifier a in
+         match atype with
+         Array(a1, e1) ->
+          ( let (e2a, e3b) = expr e2 in
+            if a1=e2a then
+             (a1, SMatAssign(a,(index, index'), (e3a,e3b) ) )
+
+          else raise(Failure "Array and attempted assignement are incompatible types")
+          )
+         |_-> raise(Failure "Can only perform array assignment to an array")
+        )
+      |_-> raise(Failure "Must access array elements by Int")
+
+)
 
       | MatAssign(m, e1, e2, e3)->
-      | ArrAssign(a, e1, e2) ->
 
 (*
 first we check if the element is valid then we check if the expression is valid then we check if the
