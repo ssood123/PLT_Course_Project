@@ -10,14 +10,19 @@ eval $(opam env)
 ocamlbuild -pkgs llvm integraph.native
 ```
 
-### Run the MicroC compiler and generate llvm code
+### Run the InteGraph compiler and generate llvm code for a file called example.mc containing InteGraph source code
 ```
 ./integraph.native -l example.mc > example.out
 ```
 
-### Run the llvm code
+### Run the llvm code generated from the previous stem
 ```
 lli example.out
+```
+
+### Run the automated tests (assuming that "eval $(opam env)" and "ocamlbuild -pkgs llvm integraph.native" have been run)
+```
+python3 automatedTests.py
 ```
 
 ### Compiler files
@@ -26,12 +31,12 @@ lli example.out
 -  `microcparse.mly`: parser
 -  `sast.ml`: definition of the semantically-checked AST
 -  `semant.ml`: semantic checking
--  `irgen.ml`: LLVM IR code generator
+-  `codegen.ml`: LLVM IR code generator
 
 ### Other files
 
-- `test1.ml`: the file to test the scanner and parser
-- `test2.ml`: the file to test the semantic checker
-- `microc.ml`: top-level file to test and run microc compiler
+- `testAST.ml`: the file to test the scanner and parser
+- `testSemant.ml`: the file to test the semantic checker
+- `integraph.ml`: top-level file to test and run the integraph compiler
 - `example.mc`: a sample microc source code
 - `example.out`: a sample compiled code of example.mc
