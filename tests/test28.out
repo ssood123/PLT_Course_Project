@@ -1,0 +1,105 @@
+; ModuleID = 'integraph'
+source_filename = "integraph"
+
+@fmt = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@fmt.1 = private unnamed_addr constant [4 x i8] c"%s\0A\00", align 1
+@fmt.2 = private unnamed_addr constant [4 x i8] c"%g\0A\00", align 1
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @printbig(i32)
+
+define void @main() {
+entry:
+  %mat = alloca [2 x [3 x double]], align 8
+  %mat2 = alloca [2 x [3 x double]], align 8
+  %mat3 = alloca [2 x [3 x double]], align 8
+  %i = alloca i32, align 4
+  %j = alloca i32, align 4
+  store [2 x [3 x double]] [[3 x double] [double 1.000000e+00, double 2.000000e+00, double 3.000000e+00], [3 x double] [double 4.000000e+00, double 5.000000e+00, double 6.000000e+00]], [2 x [3 x double]]* %mat, align 8
+  store [2 x [3 x double]] [[3 x double] [double 1.000000e+00, double 2.000000e+00, double 3.000000e+00], [3 x double] [double 4.000000e+00, double 5.000000e+00, double 6.000000e+00]], [2 x [3 x double]]* %mat2, align 8
+  %mat1 = load [2 x [3 x double]], [2 x [3 x double]]* %mat, align 8
+  %mat22 = load [2 x [3 x double]], [2 x [3 x double]]* %mat2, align 8
+  %tempMat = alloca [2 x [3 x double]], align 8
+  %mat4 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %mat, i32 0, i32 0, i32 0
+  %mat5 = load double, double* %mat4, align 8
+  %mat26 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %mat2, i32 0, i32 0, i32 0
+  %mat27 = load double, double* %mat26, align 8
+  %temp = fdiv double %mat5, %mat27
+  %tmpmat = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %tempMat, i32 0, i32 0, i32 0
+  store double %temp, double* %tmpmat, align 8
+  %mat8 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %mat, i32 0, i32 0, i32 1
+  %mat9 = load double, double* %mat8, align 8
+  %mat210 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %mat2, i32 0, i32 0, i32 1
+  %mat211 = load double, double* %mat210, align 8
+  %temp12 = fdiv double %mat9, %mat211
+  %tmpmat13 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %tempMat, i32 0, i32 0, i32 1
+  store double %temp12, double* %tmpmat13, align 8
+  %mat14 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %mat, i32 0, i32 0, i32 2
+  %mat15 = load double, double* %mat14, align 8
+  %mat216 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %mat2, i32 0, i32 0, i32 2
+  %mat217 = load double, double* %mat216, align 8
+  %temp18 = fdiv double %mat15, %mat217
+  %tmpmat19 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %tempMat, i32 0, i32 0, i32 2
+  store double %temp18, double* %tmpmat19, align 8
+  %mat20 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %mat, i32 0, i32 1, i32 0
+  %mat21 = load double, double* %mat20, align 8
+  %mat222 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %mat2, i32 0, i32 1, i32 0
+  %mat223 = load double, double* %mat222, align 8
+  %temp24 = fdiv double %mat21, %mat223
+  %tmpmat25 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %tempMat, i32 0, i32 1, i32 0
+  store double %temp24, double* %tmpmat25, align 8
+  %mat28 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %mat, i32 0, i32 1, i32 1
+  %mat29 = load double, double* %mat28, align 8
+  %mat230 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %mat2, i32 0, i32 1, i32 1
+  %mat231 = load double, double* %mat230, align 8
+  %temp32 = fdiv double %mat29, %mat231
+  %tmpmat33 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %tempMat, i32 0, i32 1, i32 1
+  store double %temp32, double* %tmpmat33, align 8
+  %mat34 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %mat, i32 0, i32 1, i32 2
+  %mat35 = load double, double* %mat34, align 8
+  %mat236 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %mat2, i32 0, i32 1, i32 2
+  %mat237 = load double, double* %mat236, align 8
+  %temp38 = fdiv double %mat35, %mat237
+  %tmpmat39 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %tempMat, i32 0, i32 1, i32 2
+  store double %temp38, double* %tmpmat39, align 8
+  %tempMat40 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %tempMat, i32 0
+  %tempMat41 = load [2 x [3 x double]], [2 x [3 x double]]* %tempMat40, align 8
+  store [2 x [3 x double]] %tempMat41, [2 x [3 x double]]* %mat3, align 8
+  store i32 0, i32* %i, align 4
+  br label %while
+
+while:                                            ; preds = %merge, %entry
+  %i53 = load i32, i32* %i, align 4
+  %tmp54 = icmp slt i32 %i53, 2
+  br i1 %tmp54, label %while_body, label %merge55
+
+while_body:                                       ; preds = %while
+  store i32 0, i32* %j, align 4
+  br label %while42
+
+while42:                                          ; preds = %while_body43, %while_body
+  %j49 = load i32, i32* %j, align 4
+  %tmp50 = icmp slt i32 %j49, 3
+  br i1 %tmp50, label %while_body43, label %merge
+
+while_body43:                                     ; preds = %while42
+  %i44 = load i32, i32* %i, align 4
+  %j45 = load i32, i32* %j, align 4
+  %mat346 = getelementptr [2 x [3 x double]], [2 x [3 x double]]* %mat3, i32 0, i32 %i44, i32 %j45
+  %mat347 = load double, double* %mat346, align 8
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt.2, i32 0, i32 0), double %mat347)
+  %j48 = load i32, i32* %j, align 4
+  %tmp = add i32 %j48, 1
+  store i32 %tmp, i32* %j, align 4
+  br label %while42
+
+merge:                                            ; preds = %while42
+  %i51 = load i32, i32* %i, align 4
+  %tmp52 = add i32 %i51, 1
+  store i32 %tmp52, i32* %i, align 4
+  br label %while
+
+merge55:                                          ; preds = %while
+  ret void
+}

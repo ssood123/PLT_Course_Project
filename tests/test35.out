@@ -1,0 +1,60 @@
+; ModuleID = 'integraph'
+source_filename = "integraph"
+
+@fmt = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@fmt.1 = private unnamed_addr constant [4 x i8] c"%s\0A\00", align 1
+@fmt.2 = private unnamed_addr constant [4 x i8] c"%g\0A\00", align 1
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @printbig(i32)
+
+define void @main() {
+entry:
+  %m1 = alloca [3 x [3 x i32]], align 4
+  %i = alloca i32, align 4
+  %j = alloca i32, align 4
+  store [3 x [3 x i32]] [[3 x i32] [i32 1, i32 2, i32 3], [3 x i32] [i32 4, i32 5, i32 6], [3 x i32] [i32 7, i32 8, i32 9]], [3 x [3 x i32]]* %m1, align 4
+  %m11 = getelementptr [3 x [3 x i32]], [3 x [3 x i32]]* %m1, i32 0, i32 0, i32 2
+  store i32 30, i32* %m11, align 4
+  %m12 = getelementptr [3 x [3 x i32]], [3 x [3 x i32]]* %m1, i32 0, i32 1, i32 2
+  store i32 30, i32* %m12, align 4
+  %m13 = getelementptr [3 x [3 x i32]], [3 x [3 x i32]]* %m1, i32 0, i32 2, i32 2
+  store i32 30, i32* %m13, align 4
+  store i32 0, i32* %i, align 4
+  br label %while
+
+while:                                            ; preds = %merge, %entry
+  %i15 = load i32, i32* %i, align 4
+  %tmp16 = icmp slt i32 %i15, 3
+  br i1 %tmp16, label %while_body, label %merge17
+
+while_body:                                       ; preds = %while
+  store i32 0, i32* %j, align 4
+  br label %while4
+
+while4:                                           ; preds = %while_body5, %while_body
+  %j11 = load i32, i32* %j, align 4
+  %tmp12 = icmp slt i32 %j11, 3
+  br i1 %tmp12, label %while_body5, label %merge
+
+while_body5:                                      ; preds = %while4
+  %i6 = load i32, i32* %i, align 4
+  %j7 = load i32, i32* %j, align 4
+  %m18 = getelementptr [3 x [3 x i32]], [3 x [3 x i32]]* %m1, i32 0, i32 %i6, i32 %j7
+  %m19 = load i32, i32* %m18, align 4
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt, i32 0, i32 0), i32 %m19)
+  %j10 = load i32, i32* %j, align 4
+  %tmp = add i32 %j10, 1
+  store i32 %tmp, i32* %j, align 4
+  br label %while4
+
+merge:                                            ; preds = %while4
+  %i13 = load i32, i32* %i, align 4
+  %tmp14 = add i32 %i13, 1
+  store i32 %tmp14, i32* %i, align 4
+  br label %while
+
+merge17:                                          ; preds = %while
+  ret void
+}

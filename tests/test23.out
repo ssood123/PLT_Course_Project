@@ -1,0 +1,120 @@
+; ModuleID = 'integraph'
+source_filename = "integraph"
+
+@fmt = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@fmt.1 = private unnamed_addr constant [4 x i8] c"%s\0A\00", align 1
+@fmt.2 = private unnamed_addr constant [4 x i8] c"%g\0A\00", align 1
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @printbig(i32)
+
+define void @main() {
+entry:
+  %arr = alloca [6 x i32], align 4
+  %arr1 = alloca [7 x double], align 8
+  %arr2 = alloca [6 x i32], align 4
+  %arr3 = alloca [7 x double], align 8
+  %i = alloca i32, align 4
+  store [6 x i32] [i32 1, i32 2, i32 3, i32 4, i32 5, i32 6], [6 x i32]* %arr, align 4
+  %tempArray = alloca [6 x i32], align 4
+  %arr4 = getelementptr [6 x i32], [6 x i32]* %arr, i32 0, i32 0
+  %arr5 = load i32, i32* %arr4, align 4
+  %tempArray6 = getelementptr [6 x i32], [6 x i32]* %tempArray, i32 0, i32 5
+  store i32 %arr5, i32* %tempArray6, align 4
+  %arr7 = getelementptr [6 x i32], [6 x i32]* %arr, i32 0, i32 1
+  %arr8 = load i32, i32* %arr7, align 4
+  %tempArray9 = getelementptr [6 x i32], [6 x i32]* %tempArray, i32 0, i32 4
+  store i32 %arr8, i32* %tempArray9, align 4
+  %arr10 = getelementptr [6 x i32], [6 x i32]* %arr, i32 0, i32 2
+  %arr11 = load i32, i32* %arr10, align 4
+  %tempArray12 = getelementptr [6 x i32], [6 x i32]* %tempArray, i32 0, i32 3
+  store i32 %arr11, i32* %tempArray12, align 4
+  %arr13 = getelementptr [6 x i32], [6 x i32]* %arr, i32 0, i32 3
+  %arr14 = load i32, i32* %arr13, align 4
+  %tempArray15 = getelementptr [6 x i32], [6 x i32]* %tempArray, i32 0, i32 2
+  store i32 %arr14, i32* %tempArray15, align 4
+  %arr16 = getelementptr [6 x i32], [6 x i32]* %arr, i32 0, i32 4
+  %arr17 = load i32, i32* %arr16, align 4
+  %tempArray18 = getelementptr [6 x i32], [6 x i32]* %tempArray, i32 0, i32 1
+  store i32 %arr17, i32* %tempArray18, align 4
+  %arr19 = getelementptr [6 x i32], [6 x i32]* %arr, i32 0, i32 5
+  %arr20 = load i32, i32* %arr19, align 4
+  %tempArray21 = getelementptr [6 x i32], [6 x i32]* %tempArray, i32 0, i32 0
+  store i32 %arr20, i32* %tempArray21, align 4
+  %tempArray22 = getelementptr [6 x i32], [6 x i32]* %tempArray, i32 0
+  %tempArray23 = load [6 x i32], [6 x i32]* %tempArray22, align 4
+  store [6 x i32] %tempArray23, [6 x i32]* %arr2, align 4
+  store i32 0, i32* %i, align 4
+  br label %while
+
+while:                                            ; preds = %while_body, %entry
+  %i28 = load i32, i32* %i, align 4
+  %tmp29 = icmp slt i32 %i28, 6
+  br i1 %tmp29, label %while_body, label %merge
+
+while_body:                                       ; preds = %while
+  %i24 = load i32, i32* %i, align 4
+  %arr225 = getelementptr [6 x i32], [6 x i32]* %arr2, i32 0, i32 %i24
+  %arr226 = load i32, i32* %arr225, align 4
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt, i32 0, i32 0), i32 %arr226)
+  %i27 = load i32, i32* %i, align 4
+  %tmp = add i32 %i27, 1
+  store i32 %tmp, i32* %i, align 4
+  br label %while
+
+merge:                                            ; preds = %while
+  store [7 x double] [double 1.100000e+00, double 2.200000e+00, double 3.300000e+00, double 4.400000e+00, double 5.500000e+00, double 6.600000e+00, double 7.700000e+00], [7 x double]* %arr1, align 8
+  %tempArray30 = alloca [7 x double], align 8
+  %arr131 = getelementptr [7 x double], [7 x double]* %arr1, i32 0, i32 0
+  %arr132 = load double, double* %arr131, align 8
+  %tempArray33 = getelementptr [7 x double], [7 x double]* %tempArray30, i32 0, i32 6
+  store double %arr132, double* %tempArray33, align 8
+  %arr134 = getelementptr [7 x double], [7 x double]* %arr1, i32 0, i32 1
+  %arr135 = load double, double* %arr134, align 8
+  %tempArray36 = getelementptr [7 x double], [7 x double]* %tempArray30, i32 0, i32 5
+  store double %arr135, double* %tempArray36, align 8
+  %arr137 = getelementptr [7 x double], [7 x double]* %arr1, i32 0, i32 2
+  %arr138 = load double, double* %arr137, align 8
+  %tempArray39 = getelementptr [7 x double], [7 x double]* %tempArray30, i32 0, i32 4
+  store double %arr138, double* %tempArray39, align 8
+  %arr140 = getelementptr [7 x double], [7 x double]* %arr1, i32 0, i32 3
+  %arr141 = load double, double* %arr140, align 8
+  %tempArray42 = getelementptr [7 x double], [7 x double]* %tempArray30, i32 0, i32 3
+  store double %arr141, double* %tempArray42, align 8
+  %arr143 = getelementptr [7 x double], [7 x double]* %arr1, i32 0, i32 4
+  %arr144 = load double, double* %arr143, align 8
+  %tempArray45 = getelementptr [7 x double], [7 x double]* %tempArray30, i32 0, i32 2
+  store double %arr144, double* %tempArray45, align 8
+  %arr146 = getelementptr [7 x double], [7 x double]* %arr1, i32 0, i32 5
+  %arr147 = load double, double* %arr146, align 8
+  %tempArray48 = getelementptr [7 x double], [7 x double]* %tempArray30, i32 0, i32 1
+  store double %arr147, double* %tempArray48, align 8
+  %arr149 = getelementptr [7 x double], [7 x double]* %arr1, i32 0, i32 6
+  %arr150 = load double, double* %arr149, align 8
+  %tempArray51 = getelementptr [7 x double], [7 x double]* %tempArray30, i32 0, i32 0
+  store double %arr150, double* %tempArray51, align 8
+  %tempArray52 = getelementptr [7 x double], [7 x double]* %tempArray30, i32 0
+  %tempArray53 = load [7 x double], [7 x double]* %tempArray52, align 8
+  store [7 x double] %tempArray53, [7 x double]* %arr3, align 8
+  store i32 0, i32* %i, align 4
+  br label %while54
+
+while54:                                          ; preds = %while_body55, %merge
+  %i62 = load i32, i32* %i, align 4
+  %tmp63 = icmp slt i32 %i62, 7
+  br i1 %tmp63, label %while_body55, label %merge64
+
+while_body55:                                     ; preds = %while54
+  %i56 = load i32, i32* %i, align 4
+  %arr357 = getelementptr [7 x double], [7 x double]* %arr3, i32 0, i32 %i56
+  %arr358 = load double, double* %arr357, align 8
+  %printf59 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt.2, i32 0, i32 0), double %arr358)
+  %i60 = load i32, i32* %i, align 4
+  %tmp61 = add i32 %i60, 1
+  store i32 %tmp61, i32* %i, align 4
+  br label %while54
+
+merge64:                                          ; preds = %while54
+  ret void
+}

@@ -1,0 +1,57 @@
+; ModuleID = 'integraph'
+source_filename = "integraph"
+
+@fmt = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@fmt.1 = private unnamed_addr constant [4 x i8] c"%s\0A\00", align 1
+@fmt.2 = private unnamed_addr constant [4 x i8] c"%g\0A\00", align 1
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @printbig(i32)
+
+define void @main() {
+entry:
+  %i = alloca i32, align 4
+  store i32 7, i32* %i, align 4
+  %i1 = load i32, i32* %i, align 4
+  %tmp = icmp eq i32 %i1, 7
+  br i1 %tmp, label %then, label %else15
+
+merge:                                            ; preds = %else15, %merge6
+  ret void
+
+then:                                             ; preds = %entry
+  %i2 = load i32, i32* %i, align 4
+  %tmp3 = sub i32 %i2, 3
+  store i32 %tmp3, i32* %i, align 4
+  %i4 = load i32, i32* %i, align 4
+  %tmp5 = icmp sgt i32 %i4, 10
+  br i1 %tmp5, label %then7, label %else
+
+merge6:                                           ; preds = %else, %then7
+  br label %merge
+
+then7:                                            ; preds = %then
+  %i8 = load i32, i32* %i, align 4
+  %tmp9 = sub i32 %i8, 3
+  store i32 %tmp9, i32* %i, align 4
+  %i10 = load i32, i32* %i, align 4
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt, i32 0, i32 0), i32 %i10)
+  br label %merge6
+
+else:                                             ; preds = %then
+  %i11 = load i32, i32* %i, align 4
+  %tmp12 = add i32 %i11, 1
+  store i32 %tmp12, i32* %i, align 4
+  %i13 = load i32, i32* %i, align 4
+  %printf14 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt, i32 0, i32 0), i32 %i13)
+  br label %merge6
+
+else15:                                           ; preds = %entry
+  %i16 = load i32, i32* %i, align 4
+  %tmp17 = add i32 %i16, 3
+  store i32 %tmp17, i32* %i, align 4
+  %i18 = load i32, i32* %i, align 4
+  %printf19 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt, i32 0, i32 0), i32 %i18)
+  br label %merge
+}

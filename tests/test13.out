@@ -1,0 +1,66 @@
+; ModuleID = 'integraph'
+source_filename = "integraph"
+
+@fmt = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@fmt.1 = private unnamed_addr constant [4 x i8] c"%s\0A\00", align 1
+@fmt.2 = private unnamed_addr constant [4 x i8] c"%g\0A\00", align 1
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @printbig(i32)
+
+define void @main() {
+entry:
+  %i = alloca i32, align 4
+  store i32 3, i32* %i, align 4
+  %i1 = load i32, i32* %i, align 4
+  %tmp = icmp eq i32 %i1, 0
+  br i1 %tmp, label %then, label %else
+
+merge:                                            ; preds = %merge4, %then
+  ret void
+
+then:                                             ; preds = %entry
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt, i32 0, i32 0), i32 0)
+  br label %merge
+
+else:                                             ; preds = %entry
+  %i2 = load i32, i32* %i, align 4
+  %tmp3 = icmp eq i32 %i2, 1
+  br i1 %tmp3, label %then5, label %else7
+
+merge4:                                           ; preds = %merge10, %then5
+  br label %merge
+
+then5:                                            ; preds = %else
+  %printf6 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt, i32 0, i32 0), i32 1)
+  br label %merge4
+
+else7:                                            ; preds = %else
+  %i8 = load i32, i32* %i, align 4
+  %tmp9 = icmp eq i32 %i8, 2
+  br i1 %tmp9, label %then11, label %else13
+
+merge10:                                          ; preds = %merge16, %then11
+  br label %merge4
+
+then11:                                           ; preds = %else7
+  %printf12 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt, i32 0, i32 0), i32 2)
+  br label %merge10
+
+else13:                                           ; preds = %else7
+  %i14 = load i32, i32* %i, align 4
+  %tmp15 = icmp eq i32 %i14, 3
+  br i1 %tmp15, label %then17, label %else19
+
+merge16:                                          ; preds = %else19, %then17
+  br label %merge10
+
+then17:                                           ; preds = %else13
+  %printf18 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt, i32 0, i32 0), i32 3)
+  br label %merge16
+
+else19:                                           ; preds = %else13
+  %printf20 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt, i32 0, i32 0), i32 4)
+  br label %merge16
+}

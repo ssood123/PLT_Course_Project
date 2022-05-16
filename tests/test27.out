@@ -1,0 +1,91 @@
+; ModuleID = 'integraph'
+source_filename = "integraph"
+
+@fmt = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@fmt.1 = private unnamed_addr constant [4 x i8] c"%s\0A\00", align 1
+@fmt.2 = private unnamed_addr constant [4 x i8] c"%g\0A\00", align 1
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @printbig(i32)
+
+define void @main() {
+entry:
+  %mat = alloca [2 x [2 x i32]], align 4
+  %mat2 = alloca [2 x [2 x i32]], align 4
+  %mat3 = alloca [2 x [2 x i32]], align 4
+  %i = alloca i32, align 4
+  %j = alloca i32, align 4
+  store [2 x [2 x i32]] [[2 x i32] [i32 1, i32 2], [2 x i32] [i32 3, i32 4]], [2 x [2 x i32]]* %mat, align 4
+  store [2 x [2 x i32]] [[2 x i32] [i32 2, i32 3], [2 x i32] [i32 4, i32 5]], [2 x [2 x i32]]* %mat2, align 4
+  %mat1 = load [2 x [2 x i32]], [2 x [2 x i32]]* %mat, align 4
+  %mat22 = load [2 x [2 x i32]], [2 x [2 x i32]]* %mat2, align 4
+  %tempMat = alloca [2 x [2 x i32]], align 4
+  %mat4 = getelementptr [2 x [2 x i32]], [2 x [2 x i32]]* %mat, i32 0, i32 0, i32 0
+  %mat5 = load i32, i32* %mat4, align 4
+  %mat26 = getelementptr [2 x [2 x i32]], [2 x [2 x i32]]* %mat2, i32 0, i32 0, i32 0
+  %mat27 = load i32, i32* %mat26, align 4
+  %temp = mul i32 %mat5, %mat27
+  %tempMat8 = getelementptr [2 x [2 x i32]], [2 x [2 x i32]]* %tempMat, i32 0, i32 0, i32 0
+  store i32 %temp, i32* %tempMat8, align 4
+  %mat9 = getelementptr [2 x [2 x i32]], [2 x [2 x i32]]* %mat, i32 0, i32 0, i32 1
+  %mat10 = load i32, i32* %mat9, align 4
+  %mat211 = getelementptr [2 x [2 x i32]], [2 x [2 x i32]]* %mat2, i32 0, i32 0, i32 1
+  %mat212 = load i32, i32* %mat211, align 4
+  %temp13 = mul i32 %mat10, %mat212
+  %tempMat14 = getelementptr [2 x [2 x i32]], [2 x [2 x i32]]* %tempMat, i32 0, i32 0, i32 1
+  store i32 %temp13, i32* %tempMat14, align 4
+  %mat15 = getelementptr [2 x [2 x i32]], [2 x [2 x i32]]* %mat, i32 0, i32 1, i32 0
+  %mat16 = load i32, i32* %mat15, align 4
+  %mat217 = getelementptr [2 x [2 x i32]], [2 x [2 x i32]]* %mat2, i32 0, i32 1, i32 0
+  %mat218 = load i32, i32* %mat217, align 4
+  %temp19 = mul i32 %mat16, %mat218
+  %tempMat20 = getelementptr [2 x [2 x i32]], [2 x [2 x i32]]* %tempMat, i32 0, i32 1, i32 0
+  store i32 %temp19, i32* %tempMat20, align 4
+  %mat21 = getelementptr [2 x [2 x i32]], [2 x [2 x i32]]* %mat, i32 0, i32 1, i32 1
+  %mat23 = load i32, i32* %mat21, align 4
+  %mat224 = getelementptr [2 x [2 x i32]], [2 x [2 x i32]]* %mat2, i32 0, i32 1, i32 1
+  %mat225 = load i32, i32* %mat224, align 4
+  %temp26 = mul i32 %mat23, %mat225
+  %tempMat27 = getelementptr [2 x [2 x i32]], [2 x [2 x i32]]* %tempMat, i32 0, i32 1, i32 1
+  store i32 %temp26, i32* %tempMat27, align 4
+  %tempMat28 = getelementptr [2 x [2 x i32]], [2 x [2 x i32]]* %tempMat, i32 0
+  %tempMat29 = load [2 x [2 x i32]], [2 x [2 x i32]]* %tempMat28, align 4
+  store [2 x [2 x i32]] %tempMat29, [2 x [2 x i32]]* %mat3, align 4
+  store i32 0, i32* %i, align 4
+  br label %while
+
+while:                                            ; preds = %merge, %entry
+  %i41 = load i32, i32* %i, align 4
+  %tmp42 = icmp slt i32 %i41, 2
+  br i1 %tmp42, label %while_body, label %merge43
+
+while_body:                                       ; preds = %while
+  store i32 0, i32* %j, align 4
+  br label %while30
+
+while30:                                          ; preds = %while_body31, %while_body
+  %j37 = load i32, i32* %j, align 4
+  %tmp38 = icmp slt i32 %j37, 2
+  br i1 %tmp38, label %while_body31, label %merge
+
+while_body31:                                     ; preds = %while30
+  %i32 = load i32, i32* %i, align 4
+  %j33 = load i32, i32* %j, align 4
+  %mat334 = getelementptr [2 x [2 x i32]], [2 x [2 x i32]]* %mat3, i32 0, i32 %i32, i32 %j33
+  %mat335 = load i32, i32* %mat334, align 4
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt, i32 0, i32 0), i32 %mat335)
+  %j36 = load i32, i32* %j, align 4
+  %tmp = add i32 %j36, 1
+  store i32 %tmp, i32* %j, align 4
+  br label %while30
+
+merge:                                            ; preds = %while30
+  %i39 = load i32, i32* %i, align 4
+  %tmp40 = add i32 %i39, 1
+  store i32 %tmp40, i32* %i, align 4
+  br label %while
+
+merge43:                                          ; preds = %while
+  ret void
+}

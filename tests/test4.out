@@ -1,0 +1,56 @@
+; ModuleID = 'integraph'
+source_filename = "integraph"
+
+@fmt = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@fmt.1 = private unnamed_addr constant [4 x i8] c"%s\0A\00", align 1
+@fmt.2 = private unnamed_addr constant [4 x i8] c"%g\0A\00", align 1
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @printbig(i32)
+
+define void @main() {
+entry:
+  %i = alloca i32, align 4
+  %j = alloca i32, align 4
+  %k = alloca i32, align 4
+  store i32 4, i32* %k, align 4
+  store i32 0, i32* %i, align 4
+  br label %while
+
+while:                                            ; preds = %merge, %entry
+  %i13 = load i32, i32* %i, align 4
+  %k14 = load i32, i32* %k, align 4
+  %tmp15 = icmp sle i32 %i13, %k14
+  br i1 %tmp15, label %while_body, label %merge16
+
+while_body:                                       ; preds = %while
+  store i32 0, i32* %j, align 4
+  br label %while1
+
+while1:                                           ; preds = %while_body2, %while_body
+  %j7 = load i32, i32* %j, align 4
+  %k8 = load i32, i32* %k, align 4
+  %tmp9 = add i32 %k8, 1
+  %tmp10 = icmp slt i32 %j7, %tmp9
+  br i1 %tmp10, label %while_body2, label %merge
+
+while_body2:                                      ; preds = %while1
+  %i3 = load i32, i32* %i, align 4
+  %j4 = load i32, i32* %j, align 4
+  %tmp = add i32 %i3, %j4
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt, i32 0, i32 0), i32 %tmp)
+  %j5 = load i32, i32* %j, align 4
+  %tmp6 = add i32 %j5, 1
+  store i32 %tmp6, i32* %j, align 4
+  br label %while1
+
+merge:                                            ; preds = %while1
+  %i11 = load i32, i32* %i, align 4
+  %tmp12 = add i32 %i11, 2
+  store i32 %tmp12, i32* %i, align 4
+  br label %while
+
+merge16:                                          ; preds = %while
+  ret void
+}

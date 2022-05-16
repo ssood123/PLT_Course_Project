@@ -1,0 +1,47 @@
+; ModuleID = 'integraph'
+source_filename = "integraph"
+
+@i = global i32 0
+@fmt = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@fmt.1 = private unnamed_addr constant [4 x i8] c"%s\0A\00", align 1
+@fmt.2 = private unnamed_addr constant [4 x i8] c"%g\0A\00", align 1
+@fmt.3 = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@fmt.4 = private unnamed_addr constant [4 x i8] c"%s\0A\00", align 1
+@fmt.5 = private unnamed_addr constant [4 x i8] c"%g\0A\00", align 1
+@fmt.6 = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@fmt.7 = private unnamed_addr constant [4 x i8] c"%s\0A\00", align 1
+@fmt.8 = private unnamed_addr constant [4 x i8] c"%g\0A\00", align 1
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @printbig(i32)
+
+define void @main2() {
+entry:
+  %i = load i32, i32* @i, align 4
+  %tmp = add i32 %i, 2
+  store i32 %tmp, i32* @i, align 4
+  %i1 = load i32, i32* @i, align 4
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt, i32 0, i32 0), i32 %i1)
+  ret void
+}
+
+define void @main1() {
+entry:
+  %i = load i32, i32* @i, align 4
+  %tmp = add i32 %i, 1
+  store i32 %tmp, i32* @i, align 4
+  %i1 = load i32, i32* @i, align 4
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt.3, i32 0, i32 0), i32 %i1)
+  call void @main2()
+  ret void
+}
+
+define void @main() {
+entry:
+  store i32 7, i32* @i, align 4
+  %i = load i32, i32* @i, align 4
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt.6, i32 0, i32 0), i32 %i)
+  call void @main1()
+  ret void
+}

@@ -1,0 +1,107 @@
+; ModuleID = 'integraph'
+source_filename = "integraph"
+
+@fmt = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@fmt.1 = private unnamed_addr constant [4 x i8] c"%s\0A\00", align 1
+@fmt.2 = private unnamed_addr constant [4 x i8] c"%g\0A\00", align 1
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @printbig(i32)
+
+define void @main() {
+entry:
+  %m1 = alloca [3 x [4 x double]], align 8
+  %m2 = alloca [4 x [3 x double]], align 8
+  %i = alloca i32, align 4
+  %j = alloca i32, align 4
+  store [3 x [4 x double]] [[4 x double] [double 1.000000e+00, double 2.000000e+00, double 3.000000e+00, double 4.000000e+00], [4 x double] [double 5.000000e+00, double 6.000000e+00, double 7.000000e+00, double 8.000000e+00], [4 x double] [double 9.000000e+00, double 1.000000e+01, double 1.100000e+01, double 1.200000e+01]], [3 x [4 x double]]* %m1, align 8
+  %tempMatrix = alloca [4 x [3 x double]], align 8
+  %m11 = getelementptr [3 x [4 x double]], [3 x [4 x double]]* %m1, i32 0, i32 0, i32 0
+  %m12 = load double, double* %m11, align 8
+  %tempMatrix3 = getelementptr [4 x [3 x double]], [4 x [3 x double]]* %tempMatrix, i32 0, i32 0, i32 0
+  store double %m12, double* %tempMatrix3, align 8
+  %m14 = getelementptr [3 x [4 x double]], [3 x [4 x double]]* %m1, i32 0, i32 0, i32 1
+  %m15 = load double, double* %m14, align 8
+  %tempMatrix6 = getelementptr [4 x [3 x double]], [4 x [3 x double]]* %tempMatrix, i32 0, i32 1, i32 0
+  store double %m15, double* %tempMatrix6, align 8
+  %m17 = getelementptr [3 x [4 x double]], [3 x [4 x double]]* %m1, i32 0, i32 0, i32 2
+  %m18 = load double, double* %m17, align 8
+  %tempMatrix9 = getelementptr [4 x [3 x double]], [4 x [3 x double]]* %tempMatrix, i32 0, i32 2, i32 0
+  store double %m18, double* %tempMatrix9, align 8
+  %m110 = getelementptr [3 x [4 x double]], [3 x [4 x double]]* %m1, i32 0, i32 0, i32 3
+  %m111 = load double, double* %m110, align 8
+  %tempMatrix12 = getelementptr [4 x [3 x double]], [4 x [3 x double]]* %tempMatrix, i32 0, i32 3, i32 0
+  store double %m111, double* %tempMatrix12, align 8
+  %m113 = getelementptr [3 x [4 x double]], [3 x [4 x double]]* %m1, i32 0, i32 1, i32 0
+  %m114 = load double, double* %m113, align 8
+  %tempMatrix15 = getelementptr [4 x [3 x double]], [4 x [3 x double]]* %tempMatrix, i32 0, i32 0, i32 1
+  store double %m114, double* %tempMatrix15, align 8
+  %m116 = getelementptr [3 x [4 x double]], [3 x [4 x double]]* %m1, i32 0, i32 1, i32 1
+  %m117 = load double, double* %m116, align 8
+  %tempMatrix18 = getelementptr [4 x [3 x double]], [4 x [3 x double]]* %tempMatrix, i32 0, i32 1, i32 1
+  store double %m117, double* %tempMatrix18, align 8
+  %m119 = getelementptr [3 x [4 x double]], [3 x [4 x double]]* %m1, i32 0, i32 1, i32 2
+  %m120 = load double, double* %m119, align 8
+  %tempMatrix21 = getelementptr [4 x [3 x double]], [4 x [3 x double]]* %tempMatrix, i32 0, i32 2, i32 1
+  store double %m120, double* %tempMatrix21, align 8
+  %m122 = getelementptr [3 x [4 x double]], [3 x [4 x double]]* %m1, i32 0, i32 1, i32 3
+  %m123 = load double, double* %m122, align 8
+  %tempMatrix24 = getelementptr [4 x [3 x double]], [4 x [3 x double]]* %tempMatrix, i32 0, i32 3, i32 1
+  store double %m123, double* %tempMatrix24, align 8
+  %m125 = getelementptr [3 x [4 x double]], [3 x [4 x double]]* %m1, i32 0, i32 2, i32 0
+  %m126 = load double, double* %m125, align 8
+  %tempMatrix27 = getelementptr [4 x [3 x double]], [4 x [3 x double]]* %tempMatrix, i32 0, i32 0, i32 2
+  store double %m126, double* %tempMatrix27, align 8
+  %m128 = getelementptr [3 x [4 x double]], [3 x [4 x double]]* %m1, i32 0, i32 2, i32 1
+  %m129 = load double, double* %m128, align 8
+  %tempMatrix30 = getelementptr [4 x [3 x double]], [4 x [3 x double]]* %tempMatrix, i32 0, i32 1, i32 2
+  store double %m129, double* %tempMatrix30, align 8
+  %m131 = getelementptr [3 x [4 x double]], [3 x [4 x double]]* %m1, i32 0, i32 2, i32 2
+  %m132 = load double, double* %m131, align 8
+  %tempMatrix33 = getelementptr [4 x [3 x double]], [4 x [3 x double]]* %tempMatrix, i32 0, i32 2, i32 2
+  store double %m132, double* %tempMatrix33, align 8
+  %m134 = getelementptr [3 x [4 x double]], [3 x [4 x double]]* %m1, i32 0, i32 2, i32 3
+  %m135 = load double, double* %m134, align 8
+  %tempMatrix36 = getelementptr [4 x [3 x double]], [4 x [3 x double]]* %tempMatrix, i32 0, i32 3, i32 2
+  store double %m135, double* %tempMatrix36, align 8
+  %tempMatrix37 = getelementptr [4 x [3 x double]], [4 x [3 x double]]* %tempMatrix, i32 0
+  %tempMatrix38 = load [4 x [3 x double]], [4 x [3 x double]]* %tempMatrix37, align 8
+  store [4 x [3 x double]] %tempMatrix38, [4 x [3 x double]]* %m2, align 8
+  store i32 0, i32* %i, align 4
+  br label %while
+
+while:                                            ; preds = %merge, %entry
+  %i50 = load i32, i32* %i, align 4
+  %tmp51 = icmp slt i32 %i50, 4
+  br i1 %tmp51, label %while_body, label %merge52
+
+while_body:                                       ; preds = %while
+  store i32 0, i32* %j, align 4
+  br label %while39
+
+while39:                                          ; preds = %while_body40, %while_body
+  %j46 = load i32, i32* %j, align 4
+  %tmp47 = icmp slt i32 %j46, 3
+  br i1 %tmp47, label %while_body40, label %merge
+
+while_body40:                                     ; preds = %while39
+  %i41 = load i32, i32* %i, align 4
+  %j42 = load i32, i32* %j, align 4
+  %m243 = getelementptr [4 x [3 x double]], [4 x [3 x double]]* %m2, i32 0, i32 %i41, i32 %j42
+  %m244 = load double, double* %m243, align 8
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt.2, i32 0, i32 0), double %m244)
+  %j45 = load i32, i32* %j, align 4
+  %tmp = add i32 %j45, 1
+  store i32 %tmp, i32* %j, align 4
+  br label %while39
+
+merge:                                            ; preds = %while39
+  %i48 = load i32, i32* %i, align 4
+  %tmp49 = add i32 %i48, 1
+  store i32 %tmp49, i32* %i, align 4
+  br label %while
+
+merge52:                                          ; preds = %while
+  ret void
+}

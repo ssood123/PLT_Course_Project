@@ -1,0 +1,41 @@
+; ModuleID = 'integraph'
+source_filename = "integraph"
+
+@fmt = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@fmt.1 = private unnamed_addr constant [4 x i8] c"%s\0A\00", align 1
+@fmt.2 = private unnamed_addr constant [4 x i8] c"%g\0A\00", align 1
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @printbig(i32)
+
+define void @main() {
+entry:
+  %a1 = alloca [8 x double], align 8
+  %i = alloca i32, align 4
+  store [8 x double] [double 0x3FF1C71C53F39D1B, double 0x3FF38E38A7E73A36, double 0x3FF55554FBDAD752, double 0x3FF71C71BB2E3ED8, double 0x3FF8E38E3765C7DB, double 0x3FFAAAA9F7B5AEA3, double 0x3FFC71C64BA94BBE, double 0x3FFE38E29F9CE8D9], [8 x double]* %a1, align 8
+  %a11 = getelementptr [8 x double], [8 x double]* %a1, i32 0, i32 3
+  store double 0x40511BB3F63C31DF, double* %a11, align 8
+  %a12 = getelementptr [8 x double], [8 x double]* %a1, i32 0, i32 6
+  store double 0x407E96EA161E4F76, double* %a12, align 8
+  store i32 0, i32* %i, align 4
+  br label %while
+
+while:                                            ; preds = %while_body, %entry
+  %i7 = load i32, i32* %i, align 4
+  %tmp8 = icmp slt i32 %i7, 8
+  br i1 %tmp8, label %while_body, label %merge
+
+while_body:                                       ; preds = %while
+  %i3 = load i32, i32* %i, align 4
+  %a14 = getelementptr [8 x double], [8 x double]* %a1, i32 0, i32 %i3
+  %a15 = load double, double* %a14, align 8
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt.2, i32 0, i32 0), double %a15)
+  %i6 = load i32, i32* %i, align 4
+  %tmp = add i32 %i6, 1
+  store i32 %tmp, i32* %i, align 4
+  br label %while
+
+merge:                                            ; preds = %while
+  ret void
+}
