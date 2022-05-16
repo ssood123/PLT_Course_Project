@@ -28,7 +28,7 @@ python3 automatedTests.py
 ### Compiler files
 -  `ast.ml`: abstract syntax tree (AST) definition
 -  `scanner.mll`: scanner
--  `microcparse.mly`: parser
+-  `parser.mly`: parser
 -  `sast.ml`: definition of the semantically-checked AST
 -  `semant.ml`: semantic checking
 -  `codegen.ml`: LLVM IR code generator
@@ -38,5 +38,5 @@ python3 automatedTests.py
 - `testAST.ml`: the file to test the scanner and parser
 - `testSemant.ml`: the file to test the semantic checker
 - `integraph.ml`: top-level file to test and run the integraph compiler
-- `example.mc`: a sample microc source code
+- `example.mc`: a sample InteGraph source code
 - `example.out`: a sample compiled code of example.mc
