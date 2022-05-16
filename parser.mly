@@ -146,6 +146,7 @@ expr:
   | expr GEQ    expr { Binop($1, Geq,   $3)   }
   | expr AND    expr { Binop($1, And,   $3)   }
   | expr OR     expr { Binop($1, Or,    $3)   }
+  | ID LBRACK expr RBRACK ASSIGN expr { ArrAssign($1, $3, $6) }
   | ID LBRACK expr RBRACK LBRACK expr RBRACK ASSIGN expr {  MatAssign($1, $3, $6, $9)   }
                       
 args_opt:

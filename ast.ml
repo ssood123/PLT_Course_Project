@@ -30,6 +30,7 @@ type expr =
   | Rotate of string
   | ArrElem of string * expr
   | MatElem of string * expr * expr
+  | ArrAssign of string * expr * expr
   | MatAssign of string * expr * expr * expr
   | Noexpr
 
@@ -104,6 +105,7 @@ let rec string_of_expr = function
   | Rotate(m) -> "rotate(" ^ m ^ ")" 
   | ArrElem(a,l) -> a ^ "[" ^ string_of_expr l ^ "]"
   | MatElem(m, r, c) -> m ^ "[" ^ string_of_expr r ^ "]" ^ "[" ^ string_of_expr c ^ "]"
+  | ArrAssign (s, v1, v2) -> s ^"[" ^ string_of_expr v1 ^ "]" ^ "[" ^ string_of_expr v2 ^ "]"
   | MatAssign (s, v1, v2, v3) -> s ^"[" ^ string_of_expr v1 ^ "]" ^ "[" ^ string_of_expr v2 ^ "]" ^ "=" ^ string_of_expr v3
   | Noexpr -> ""
 

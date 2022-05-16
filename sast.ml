@@ -9,7 +9,6 @@ and sx = SLiteral of int
 | SBinop of sexpr * op * sexpr
 | SUnop of uop * sexpr
 | SAssign of string * sexpr
-| SArrAssign of string * sexpr * sexpr
 | SCall of string * sexpr list
 | SNoexpr
 | SArrayDef of typ * (sexpr list)
@@ -23,6 +22,7 @@ and sx = SLiteral of int
 | SMatElem of string * sexpr * sexpr
 | STranspose of string * typ
 | SRotate of string * typ
+| SArrAssign of string * sexpr * sexpr
 | SMatAssign of string * sexpr * sexpr * sexpr
 type sstmt =
     SBlock of sstmt list
@@ -67,6 +67,7 @@ let rec string_of_sexpr (t, e) =
       string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
   | SUnop(o, e) -> string_of_uop o ^ string_of_sexpr e
   | SAssign(v, e) ->  v ^ " = " ^ string_of_sexpr e
+   | SArrAssign(s,e1,e2) -> "Array "^ s^ "  index "^string_of_sexpr e1 ^ " equals "^ string_of_sexpr e2
   | SMatAssign(s,e1,e2,e3) -> "Matrix "^ s^ " row "^ string_of_sexpr e1 ^ " column "^ string_of_sexpr e2 ^ " equals " ^ string_of_sexpr e3
   | SCall(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"

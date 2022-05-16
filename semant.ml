@@ -173,35 +173,27 @@ let check (globals, functions) =
                               |_ -> raise(Failure "Cannot get an element of a non-matrix")
                             )
                             | _ -> raise(Failure "row index or column index is not an integer"))
+     | ArrAssign(a, e1, e2) ->
+        (
+      let (index, index') = expr e1 in
+      match (index) with
+      (Int)->
+         ( let atype= type_of_identifier a in
+         match atype with
+         Array(a1, e1) ->
+          ( let (e2a, e3b) = expr e2 in
+            if a1=e2a then
+             (a1, SArrAssign(a,(index, index'), (e2a,e3b) ) )
+
+          else raise(Failure "Array and attempted assignement are incompatible types")
+          )
+         |_-> raise(Failure "Can only perform array assignment to an array")
+        )
+      |_-> raise(Failure "Must access array elements by Int")
+
+)
 
       | MatAssign(m, e1, e2, e3)->
-
-(*
-first we check if the element is valid then we check if the expression is valid then we check if the
-assignment fits with this matrix
-
-
-          let lt = type_of_identifier var
-          and (rt,e') = expr e in
-          let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
-            string_of_typ rt ^ " in " ^ string_of_expr ex
-          in (check_assign lt rt err, SAssign(var, (rt, e')))
-
-       let (m',e1',e2')= (let (rowIndex, rowIndex') = expr e1 in let (colIndex, colIndex') = expr e2 in
-                             match (rowIndex, colIndex) with
-                             (Int, Int) -> (match type_of_identifier m with
-                               Matrix(m, e1, e2) ->
-
-
-                               (m, SMatElem(m, (rowIndex, rowIndex'), (colIndex, colIndex'))) in
-                               match type_of_identifier expr e3 with type_of_identifier m' -> (m', SMatAssign(m,(rowIndex, rowIndex'),(colIndex,colIndex'), expr e3))
-                               |_ -> raise(Failure "Cannot assign this type of expression to this type of matrix"))
-
-                               |_ -> raise(Failure "Cannot get an element of a non-matrix")
-                             )
-                             | _ -> raise(Failure "row index or column index is not an integer"))
-
-*)
 (
       let (rowIndex, rowIndex') = expr e1 in
       let (colIndex, colIndex') =expr e2 in
